@@ -1,0 +1,55 @@
+import type { Review } from "@/types"
+
+export const reviews: Review[] = [
+  {
+    id: "rev_01",
+    customerName: "Ahsan Raza",
+    customerInitials: "AR",
+    product: "Maroon Velvet Sherwani",
+    rating: 5,
+    comment:
+      "Exceptional stitching and the fabric feels genuinely premium. Fit was perfect on the first try.",
+    status: "approved",
+    createdAt: "2026-07-03T12:00:00Z",
+  },
+  {
+    id: "rev_02",
+    customerName: "Bilal Khan",
+    customerInitials: "BK",
+    product: "Charcoal Three-Piece Suit",
+    rating: 4,
+    comment: "Great look and drape. Delivery took a little longer than expected.",
+    status: "approved",
+    createdAt: "2026-07-02T16:30:00Z",
+  },
+  {
+    id: "rev_03",
+    customerName: "Hamza Sheikh",
+    customerInitials: "HS",
+    product: "Navy Classic Waistcoat",
+    rating: 3,
+    comment: "Good quality but the sizing ran slightly small across the chest.",
+    status: "pending",
+    createdAt: "2026-07-02T09:10:00Z",
+  },
+  {
+    id: "rev_04",
+    customerName: "Usman Tariq",
+    customerInitials: "UT",
+    product: "Ivory Embroidered Shalwar Kameez",
+    rating: 5,
+    comment: "Beautiful tone-on-tone embroidery, exactly as pictured. Highly recommend.",
+    status: "approved",
+    createdAt: "2026-07-01T14:20:00Z",
+  },
+  {
+    id: "rev_05",
+    customerName: "Zeeshan Ali",
+    customerInitials: "ZA",
+    product: "Black Slim Western Suit",
+    rating: 2,
+    comment: "Fabric felt thinner than I expected for the price point.",
+    status: "pending",
+    createdAt: "2026-06-30T19:45:00Z",
+  },
+]
