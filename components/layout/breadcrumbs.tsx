@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 const LABELS: Record<string, string> = {
   products: "Products",
   categories: "Categories",
+  collections: "Collections",
   orders: "Orders",
   customers: "Customers",
   reviews: "Reviews",

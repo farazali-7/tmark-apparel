@@ -1,8 +1,11 @@
 import type {
+  CategoryStatus,
+  CollectionStatus,
   OrderStatus,
   PaymentStatus,
   ProductStatus,
   ReviewStatus,
+  Visibility,
 } from "@/types"
 
 export type StatusTone =
@@ -45,6 +48,32 @@ export const REVIEW_STATUS_META: Record<ReviewStatus, StatusMeta> = {
   pending: { label: "Pending", tone: "warning" },
   rejected: { label: "Rejected", tone: "danger" },
 }
+
+export const CATEGORY_STATUS_META: Record<CategoryStatus, StatusMeta> = {
+  active: { label: "Active", tone: "success" },
+  draft: { label: "Draft", tone: "neutral" },
+}
+
+export const VISIBILITY_META: Record<Visibility, StatusMeta> = {
+  visible: { label: "Visible", tone: "info" },
+  hidden: { label: "Hidden", tone: "warning" },
+}
+
+export const COLLECTION_STATUS_META: Record<CollectionStatus, StatusMeta> = {
+  published: { label: "Published", tone: "success" },
+  scheduled: { label: "Scheduled", tone: "gold" },
+  draft: { label: "Draft", tone: "neutral" },
+  archived: { label: "Archived", tone: "danger" },
+}
+
+export const SEASONS = [
+  "Wedding",
+  "Festive",
+  "Winter 2026",
+  "Summer 2026",
+  "Evergreen",
+  "Limited Edition",
+] as const
 
 export const CATEGORIES = [
   "Sherwanis",

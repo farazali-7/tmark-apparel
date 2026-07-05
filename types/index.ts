@@ -113,6 +113,60 @@ export interface ActivityEvent {
   timestamp: string
 }
 
+export type CategoryStatus = "active" | "draft"
+
+export type Visibility = "visible" | "hidden"
+
+export interface CategoryActivity {
+  id: string
+  label: string
+  timestamp: string
+}
+
+export interface Category {
+  id: string
+  name: string
+  slug: string
+  description: string
+  image: string
+  parent: string | null
+  productCount: number
+  collections: string[]
+  visibility: Visibility
+  status: CategoryStatus
+  featured: boolean
+  displayOrder: number
+  metaTitle: string
+  metaDescription: string
+  createdAt: string
+  updatedAt: string
+  activity: CategoryActivity[]
+}
+
+export type CollectionStatus = "published" | "scheduled" | "draft" | "archived"
+
+export interface Collection {
+  id: string
+  name: string
+  subtitle: string
+  slug: string
+  description: string
+  cover: string
+  season: string
+  status: CollectionStatus
+  visibility: Visibility
+  featured: boolean
+  productCount: number
+  categories: string[]
+  scheduledFor: string | null
+  revenue: number
+  views: number
+  conversion: number
+  createdAt: string
+  updatedAt: string
+  activity: CategoryActivity[]
+}
+
 export interface TrendPoint {
   value: number
 }

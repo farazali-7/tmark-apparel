@@ -40,8 +40,8 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Catalog",
     items: [
       { title: "Products", href: "/products", icon: Package, badge: "312" },
-      { title: "Categories", href: "/categories", icon: FolderTree, disabled: true },
-      { title: "Collections", href: "/collections", icon: Sparkles, disabled: true },
+      { title: "Categories", href: "/categories", icon: FolderTree, badge: "12" },
+      { title: "Collections", href: "/collections", icon: Sparkles, badge: "10" },
     ],
   },
   {
