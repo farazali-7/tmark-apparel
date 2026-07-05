@@ -4,6 +4,7 @@ import type {
   CustomerFit,
   CustomerStatus,
   CustomerTier,
+  FitFeedback,
   OrderPriority,
   OrderStage,
   OrderStatus,
@@ -11,6 +12,7 @@ import type {
   PaymentState,
   PaymentStatus,
   ProductStatus,
+  ReviewModerationStatus,
   ReviewStatus,
   ShippingState,
   Visibility,
@@ -184,6 +186,33 @@ export const PRIORITY_META: Record<OrderPriority, PriorityMeta> = {
   standard: { label: "Standard", tone: "neutral" },
   high: { label: "High", tone: "warning" },
   urgent: { label: "Urgent", tone: "danger" },
+}
+
+/* ── Reviews ─────────────────────────────────────────────────────────── */
+
+export const REVIEW_MODERATION_META: Record<ReviewModerationStatus, StatusMeta> = {
+  approved: { label: "Approved", tone: "success" },
+  pending: { label: "Pending", tone: "warning" },
+  rejected: { label: "Rejected", tone: "danger" },
+  hidden: { label: "Hidden", tone: "neutral" },
+  flagged: { label: "Flagged", tone: "danger" },
+}
+
+export const FIT_FEEDBACK_META: Record<
+  FitFeedback,
+  { label: string; tone: StatusTone }
+> = {
+  runs_small: { label: "Runs Small", tone: "warning" },
+  true_to_size: { label: "True to Size", tone: "success" },
+  runs_large: { label: "Runs Large", tone: "warning" },
+}
+
+/** Rating → tone, for star clusters and rating chips. */
+export function ratingTone(rating: number): StatusTone {
+  if (rating >= 4.5) return "success"
+  if (rating >= 4) return "gold"
+  if (rating >= 3) return "warning"
+  return "danger"
 }
 
 /* ── Customers ───────────────────────────────────────────────────────── */

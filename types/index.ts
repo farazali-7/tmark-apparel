@@ -448,6 +448,101 @@ export interface CustomerDetail {
   timeline: CustomerMilestone[]
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+ * Reviews — the brand-reputation model.
+ *
+ * The lightweight `Review` above powers the Dashboard's "Recent Reviews"
+ * widget and is left untouched. `ReviewDetail` is the full record the Reviews
+ * page moderates against: for a luxury house, reviews are reputation, so the
+ * model carries moderation state, extracted insights, media and admin replies.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+export type ReviewModerationStatus =
+  | "approved"
+  | "pending"
+  | "rejected"
+  | "hidden"
+  | "flagged"
+
+export type ReviewSentiment = "positive" | "negative" | "neutral"
+
+export type FitFeedback = "runs_small" | "true_to_size" | "runs_large"
+
+/** A tag extracted from review text — the scannable signal layer. */
+export interface ReviewInsight {
+  label: string
+  sentiment: ReviewSentiment
+}
+
+export interface ReviewReply {
+  id: string
+  author: string
+  message: string
+  at: string
+}
+
+export type ReviewActivityType =
+  | "submitted"
+  | "approved"
+  | "rejected"
+  | "edited"
+  | "replied"
+  | "reported"
+  | "featured"
+
+export interface ReviewActivityEntry {
+  id: string
+  type: ReviewActivityType
+  label: string
+  at: string
+}
+
+export interface ReviewCustomerRef {
+  id: string
+  name: string
+  initials: string
+  vip: boolean
+  ordersCount: number
+  lifetimeValue: number
+}
+
+export interface ReviewProductRef {
+  id: string
+  name: string
+  image: string
+  category: string
+  collection: string
+  price: number
+  /** The product's current average rating and review volume. */
+  rating: number
+  reviewsCount: number
+}
+
+export interface ReviewDetail {
+  id: string
+  reference: string
+  rating: number
+  title: string
+  body: string
+  /** ProductThumb swatch seeds standing in for customer photos. */
+  photos: string[]
+  insights: ReviewInsight[]
+  status: ReviewModerationStatus
+  verifiedPurchase: boolean
+  helpfulCount: number
+  reportedCount: number
+  fitFeedback: FitFeedback | null
+  pinned: boolean
+  featured: boolean
+  customer: ReviewCustomerRef
+  product: ReviewProductRef
+  reply: ReviewReply | null
+  internalNote: string | null
+  activity: ReviewActivityEntry[]
+  createdAt: string
+  updatedAt: string
+}
+
 export interface TrendPoint {
   value: number
 }
