@@ -1,6 +1,9 @@
 import type {
   CategoryStatus,
   CollectionStatus,
+  CustomerFit,
+  CustomerStatus,
+  CustomerTier,
   OrderPriority,
   OrderStage,
   OrderStatus,
@@ -181,6 +184,40 @@ export const PRIORITY_META: Record<OrderPriority, PriorityMeta> = {
   standard: { label: "Standard", tone: "neutral" },
   high: { label: "High", tone: "warning" },
   urgent: { label: "Urgent", tone: "danger" },
+}
+
+/* ── Customers ───────────────────────────────────────────────────────── */
+
+export const CUSTOMER_STATUS_META: Record<CustomerStatus, StatusMeta> = {
+  active: { label: "Active", tone: "success" },
+  inactive: { label: "Inactive", tone: "warning" },
+  archived: { label: "Archived", tone: "neutral" },
+}
+
+export interface CustomerTierMeta {
+  label: string
+  tone: StatusTone
+}
+
+export const CUSTOMER_TIER_META: Record<CustomerTier, CustomerTierMeta> = {
+  member: { label: "Member", tone: "neutral" },
+  gold: { label: "Gold", tone: "gold" },
+  platinum: { label: "Platinum", tone: "gold" },
+}
+
+export const CUSTOMER_FIT_META: Record<CustomerFit, { label: string }> = {
+  regular: { label: "Regular Fit" },
+  slim: { label: "Slim Fit" },
+  classic: { label: "Classic Fit" },
+  wedding: { label: "Wedding Fit" },
+}
+
+/** Compact currency for large lifetime-value figures — e.g. "PKR 1.2M". */
+export function formatCompactCurrency(value: number): string {
+  if (value >= 1_000_000)
+    return `PKR ${(value / 1_000_000).toFixed(value >= 10_000_000 ? 0 : 1)}M`
+  if (value >= 1_000) return `PKR ${(value / 1_000).toFixed(0)}K`
+  return formatCurrency(value)
 }
 
 export const TAILORS = [

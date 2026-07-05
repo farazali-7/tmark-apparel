@@ -320,6 +320,134 @@ export interface OrderDetail {
   updatedAt: string
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+ * Customers — the CRM model.
+ *
+ * The lightweight `Customer` above powers the Dashboard's "Latest Customers"
+ * widget and is left untouched. `CustomerDetail` is the full relationship
+ * record the Customers page works against: a luxury tailoring house lives on
+ * repeat clients, saved measurements and VIP care, so the model is
+ * relationship-first, not transaction-first.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+export type CustomerStatus = "active" | "inactive" | "archived"
+
+/** VIP tiers earned through lifetime spend & loyalty. */
+export type CustomerTier = "member" | "gold" | "platinum"
+
+export type CustomerFit = "regular" | "slim" | "classic" | "wedding"
+
+export interface MeasurementProfile {
+  id: string
+  name: string
+  fit: CustomerFit
+  measurements: OrderMeasurements
+  updatedAt: string
+}
+
+export interface CustomerAddress {
+  id: string
+  label: string
+  type: "shipping" | "billing"
+  line: string
+  city: string
+  country: string
+  flag: string
+  isDefault: boolean
+}
+
+export interface CustomerPreferences {
+  fabric: string
+  color: string
+  fit: CustomerFit
+  categories: string[]
+  collections: string[]
+  tailor: string | null
+}
+
+/** Compact order row for the profile's purchase history. */
+export interface CustomerOrderSummary {
+  id: string
+  reference: string
+  date: string
+  total: number
+  stage: OrderStage
+  type: OrderType
+  itemName: string
+  image: string
+}
+
+export type CustomerActivityType =
+  | "registered"
+  | "order"
+  | "measurement"
+  | "email"
+  | "whatsapp"
+  | "status"
+  | "profile"
+  | "review"
+  | "vip"
+
+export interface CustomerActivityEntry {
+  id: string
+  type: CustomerActivityType
+  title: string
+  meta: string
+  at: string
+}
+
+export type CustomerMilestoneKind =
+  | "registered"
+  | "first_order"
+  | "measurements"
+  | "wedding"
+  | "vip"
+  | "purchase"
+  | "review"
+
+export interface CustomerMilestone {
+  id: string
+  kind: CustomerMilestoneKind
+  label: string
+  at: string
+}
+
+export interface CustomerDetail {
+  id: string
+  reference: string
+  name: string
+  initials: string
+  email: string
+  phone: string
+  country: string
+  flag: string
+  city: string
+  status: CustomerStatus
+  vip: boolean
+  tier: CustomerTier
+  joinedAt: string
+  lastOrderAt: string | null
+  ordersCount: number
+  lifetimeValue: number
+  avgOrderValue: number
+  yearsCustomer: number
+  /* Relationship flags — power the segment cards & filters. */
+  tailoringClient: boolean
+  weddingClient: boolean
+  international: boolean
+  repeatBuyer: boolean
+  hasMeasurements: boolean
+  followUp: boolean
+  preferredTailor: string | null
+  note: string | null
+  measurementProfiles: MeasurementProfile[]
+  addresses: CustomerAddress[]
+  preferences: CustomerPreferences
+  orderHistory: CustomerOrderSummary[]
+  activity: CustomerActivityEntry[]
+  timeline: CustomerMilestone[]
+}
+
 export interface TrendPoint {
   value: number
 }

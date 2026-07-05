@@ -48,7 +48,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Commerce",
     items: [
       { title: "Orders", href: "/orders", icon: ShoppingCart, badge: "18" },
-      { title: "Customers", href: "/customers", icon: Users, disabled: true },
+      { title: "Customers", href: "/customers", icon: Users, badge: "12" },
       { title: "Reviews", href: "/reviews", icon: MessageSquareQuote, disabled: true },
       { title: "Coupons", href: "/coupons", icon: Tag, disabled: true },
     ],
