@@ -1,12 +1,34 @@
 import type {
   CategoryStatus,
   CollectionStatus,
+  OrderPriority,
+  OrderStage,
   OrderStatus,
+  OrderType,
+  PaymentState,
   PaymentStatus,
   ProductStatus,
   ReviewStatus,
+  ShippingState,
   Visibility,
 } from "@/types"
+import type { LucideIcon } from "lucide-react"
+import {
+  Ban,
+  CheckCircle2,
+  ClipboardCheck,
+  Clock,
+  Truck as CourierTruck,
+  Layers as FabricIcon,
+  PackageCheck,
+  PackageOpen,
+  Ruler,
+  ScanLine,
+  Scissors,
+  ShieldCheck,
+  Sparkles as SparklesIcon,
+  Undo2,
+} from "lucide-react"
 
 export type StatusTone =
   | "neutral"
@@ -64,6 +86,127 @@ export const COLLECTION_STATUS_META: Record<CollectionStatus, StatusMeta> = {
   scheduled: { label: "Scheduled", tone: "gold" },
   draft: { label: "Draft", tone: "neutral" },
   archived: { label: "Archived", tone: "danger" },
+}
+
+/* ── Orders ──────────────────────────────────────────────────────────────
+ * Single source of truth for stage vocabulary, ordering, icons and tones.
+ * Every order badge, the pipeline and the timeline read from these maps so
+ * they can never drift apart.
+ * ─────────────────────────────────────────────────────────────────────── */
+
+export interface StageMeta extends StatusMeta {
+  /** Compact label for the dense pipeline rail. */
+  short: string
+  icon: LucideIcon
+}
+
+export const ORDER_STAGE_META: Record<OrderStage, StageMeta> = {
+  pending: { label: "Pending", short: "Pending", tone: "warning", icon: Clock },
+  confirmed: { label: "Confirmed", short: "Confirmed", tone: "info", icon: CheckCircle2 },
+  measurements: { label: "Measurements", short: "Measured", tone: "info", icon: Ruler },
+  fabric: { label: "Fabric Selection", short: "Fabric", tone: "gold", icon: FabricIcon },
+  tailoring: { label: "Tailoring", short: "Tailoring", tone: "gold", icon: Scissors },
+  quality_check: { label: "Quality Check", short: "QC", tone: "info", icon: ShieldCheck },
+  ready: { label: "Ready", short: "Ready", tone: "info", icon: ClipboardCheck },
+  packed: { label: "Packed", short: "Packed", tone: "info", icon: PackageOpen },
+  shipped: { label: "Shipped", short: "Shipped", tone: "info", icon: CourierTruck },
+  delivered: { label: "Delivered", short: "Delivered", tone: "success", icon: PackageCheck },
+  cancelled: { label: "Cancelled", short: "Cancelled", tone: "danger", icon: Ban },
+  refund_requested: { label: "Refund Requested", short: "Refund", tone: "warning", icon: Undo2 },
+  refunded: { label: "Refunded", short: "Refunded", tone: "neutral", icon: Undo2 },
+}
+
+/** The ten happy-path stages, in production order, used by the pipeline & timeline. */
+export const ORDER_PIPELINE: OrderStage[] = [
+  "pending",
+  "confirmed",
+  "measurements",
+  "fabric",
+  "tailoring",
+  "quality_check",
+  "ready",
+  "packed",
+  "shipped",
+  "delivered",
+]
+
+export const ORDER_TERMINAL_STAGES: OrderStage[] = [
+  "cancelled",
+  "refund_requested",
+  "refunded",
+]
+
+export function stageIndex(stage: OrderStage): number {
+  return ORDER_PIPELINE.indexOf(stage)
+}
+
+export interface OrderTypeMeta {
+  label: string
+  short: string
+  tone: StatusTone
+  icon: LucideIcon
+  /** Whether this order type carries measurements & a tailoring workflow. */
+  bespoke: boolean
+}
+
+export const ORDER_TYPE_META: Record<OrderType, OrderTypeMeta> = {
+  ready_to_wear: { label: "Ready to Wear", short: "RTW", tone: "neutral", icon: ScanLine, bespoke: false },
+  made_to_measure: { label: "Made to Measure", short: "MTM", tone: "info", icon: Ruler, bespoke: true },
+  custom_tailoring: { label: "Custom Tailoring", short: "Bespoke", tone: "gold", icon: SparklesIcon, bespoke: true },
+}
+
+export const PAYMENT_STATE_META: Record<PaymentState, StatusMeta> = {
+  paid: { label: "Paid", tone: "success" },
+  partially_paid: { label: "Partially Paid", tone: "warning" },
+  unpaid: { label: "Unpaid", tone: "danger" },
+  refund_requested: { label: "Refund Requested", tone: "warning" },
+  refunded: { label: "Refunded", tone: "neutral" },
+}
+
+export const SHIPPING_STATE_META: Record<ShippingState, StatusMeta> = {
+  not_shipped: { label: "Not Shipped", tone: "neutral" },
+  processing: { label: "Processing", tone: "info" },
+  in_transit: { label: "In Transit", tone: "info" },
+  out_for_delivery: { label: "Out for Delivery", tone: "info" },
+  delivered: { label: "Delivered", tone: "success" },
+  returned: { label: "Returned", tone: "danger" },
+}
+
+export interface PriorityMeta {
+  label: string
+  tone: StatusTone
+}
+
+export const PRIORITY_META: Record<OrderPriority, PriorityMeta> = {
+  standard: { label: "Standard", tone: "neutral" },
+  high: { label: "High", tone: "warning" },
+  urgent: { label: "Urgent", tone: "danger" },
+}
+
+export const TAILORS = [
+  "Master Yousuf",
+  "Master Iqbal",
+  "Master Rehman",
+  "Master Nadeem",
+  "Atelier Team",
+] as const
+
+export const COURIERS = ["TCS", "Leopards", "DHL Express", "FedEx", "M&P"] as const
+
+/** Short, human deadline pressure — e.g. "in 3 days", "2 days overdue". */
+export function formatDeadline(iso: string | null): {
+  label: string
+  overdue: boolean
+  soon: boolean
+} | null {
+  if (!iso) return null
+  const diffMs = new Date(iso).getTime() - Date.now()
+  const days = Math.round(diffMs / 86_400_000)
+  if (days < 0)
+    return { label: `${Math.abs(days)}d overdue`, overdue: true, soon: false }
+  if (days === 0) return { label: "Due today", overdue: false, soon: true }
+  if (days === 1) return { label: "Due tomorrow", overdue: false, soon: true }
+  return { label: `Due in ${days}d`, overdue: false, soon: days <= 5 }
 }
 
 export const SEASONS = [
