@@ -1,10 +1,14 @@
 import type {
+  BannerPriority,
+  BannerStatus,
+  BannerType,
   CategoryStatus,
   CollectionStatus,
   CustomerFit,
   CustomerStatus,
   CustomerTier,
   FitFeedback,
+  HomepageSectionType,
   OrderPriority,
   OrderStage,
   OrderStatus,
@@ -23,6 +27,7 @@ import type {
 import type { LucideIcon } from "lucide-react"
 import {
   Ban,
+  Bell,
   CheckCircle2,
   ClipboardCheck,
   Clock,
@@ -30,15 +35,24 @@ import {
   Crown as CrownIcon,
   FolderTree,
   Gift,
+  Camera,
+  Grid2x2,
+  Image as ImageIcon,
   Layers as FabricIcon,
+  LayoutTemplate,
+  Mail,
+  Megaphone,
+  MessageSquareQuote,
   Package,
   PackageCheck,
   PackageOpen,
+  PanelBottom,
   Percent,
   Ruler,
   ScanLine,
   Scissors,
   ShieldCheck,
+  ShoppingBag,
   Sparkles as SparklesIcon,
   Store,
   Tag,
@@ -198,6 +212,58 @@ export const PRIORITY_META: Record<OrderPriority, PriorityMeta> = {
   high: { label: "High", tone: "warning" },
   urgent: { label: "Urgent", tone: "danger" },
 }
+
+/* ── Banners ─────────────────────────────────────────────────────────── */
+
+export const BANNER_STATUS_META: Record<BannerStatus, StatusMeta> = {
+  published: { label: "Published", tone: "success" },
+  scheduled: { label: "Scheduled", tone: "gold" },
+  draft: { label: "Draft", tone: "neutral" },
+  expired: { label: "Expired", tone: "neutral" },
+  archived: { label: "Archived", tone: "warning" },
+}
+
+export interface BannerTypeMeta {
+  label: string
+  icon: LucideIcon
+}
+
+export const BANNER_TYPE_META: Record<BannerType, BannerTypeMeta> = {
+  homepage: { label: "Homepage", icon: LayoutTemplate },
+  category: { label: "Category", icon: FolderTree },
+  collection: { label: "Collection", icon: SparklesIcon },
+  popup: { label: "Popup", icon: ImageIcon },
+  announcement: { label: "Announcement", icon: Megaphone },
+}
+
+export const BANNER_PRIORITY_META: Record<BannerPriority, { label: string; tone: StatusTone }> = {
+  high: { label: "High", tone: "danger" },
+  medium: { label: "Medium", tone: "warning" },
+  low: { label: "Low", tone: "neutral" },
+}
+
+/* ── Homepage Builder ────────────────────────────────────────────────── */
+
+export interface SectionMeta {
+  label: string
+  description: string
+  icon: LucideIcon
+}
+
+export const SECTION_META: Record<HomepageSectionType, SectionMeta> = {
+  hero: { label: "Hero Banner", description: "Full-width opening statement", icon: ImageIcon },
+  featured_categories: { label: "Featured Categories", description: "Shop-by-category grid", icon: Grid2x2 },
+  featured_collections: { label: "Featured Collections", description: "Merchandising campaigns", icon: SparklesIcon },
+  featured_products: { label: "Featured Products", description: "Hand-picked pieces", icon: ShoppingBag },
+  brand_story: { label: "Brand Story", description: "Editorial about the house", icon: LayoutTemplate },
+  custom_tailoring: { label: "Custom Tailoring", description: "Made-to-measure invitation", icon: Ruler },
+  testimonials: { label: "Testimonials", description: "Client words & ratings", icon: MessageSquareQuote },
+  instagram: { label: "Instagram Feed", description: "Latest social posts", icon: Camera },
+  newsletter: { label: "Newsletter", description: "Email capture", icon: Mail },
+  footer: { label: "Footer", description: "Global site footer", icon: PanelBottom },
+}
+
+export const ANNOUNCEMENT_ICON = Bell
 
 /* ── Promotions ──────────────────────────────────────────────────────── */
 

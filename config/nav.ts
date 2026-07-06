@@ -56,8 +56,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Storefront",
     items: [
-      { title: "Homepage", href: "/homepage", icon: LayoutTemplate, disabled: true },
-      { title: "Banners", href: "/banners", icon: Image, disabled: true },
+      { title: "Homepage Builder", href: "/homepage", icon: LayoutTemplate },
+      { title: "Campaigns", href: "/banners", icon: Image },
       { title: "Analytics", href: "/analytics", icon: BarChart3, disabled: true },
     ],
   },

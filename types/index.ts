@@ -646,6 +646,124 @@ export interface Promotion {
   updatedAt: string
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+ * Banners — marketing campaigns, not image uploads.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+export type BannerType =
+  | "homepage"
+  | "category"
+  | "collection"
+  | "popup"
+  | "announcement"
+
+export type BannerStatus =
+  | "published"
+  | "scheduled"
+  | "draft"
+  | "expired"
+  | "archived"
+
+export type BannerPriority = "high" | "medium" | "low"
+
+export interface Banner {
+  id: string
+  name: string
+  subtitle: string
+  headline: string
+  cta: string
+  buttonLink: string
+  type: BannerType
+  targetPage: string
+  /** CampaignCover seed. */
+  cover: string
+  status: BannerStatus
+  priority: BannerPriority
+  visibility: "public" | "hidden"
+  startDate: string
+  endDate: string | null
+  impressions: number
+  clicks: number
+  createdAt: string
+  updatedAt: string
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Homepage Builder — a visual page composed of ordered sections.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+export type HomepageSectionType =
+  | "hero"
+  | "featured_categories"
+  | "featured_collections"
+  | "featured_products"
+  | "brand_story"
+  | "custom_tailoring"
+  | "testimonials"
+  | "instagram"
+  | "newsletter"
+  | "footer"
+
+/**
+ * Flat, all-optional settings bag. Each section type reads only the keys it
+ * cares about (declared in SECTION_FIELDS), so the editor stays config-driven
+ * and new fields never require a schema migration.
+ */
+export interface SectionSettings {
+  title?: string
+  subtitle?: string
+  cta?: string
+  ctaLink?: string
+  cover?: string
+  overlay?: "none" | "light" | "medium" | "dark"
+  alignment?: "left" | "center" | "right"
+  height?: "compact" | "medium" | "tall"
+  buttonStyle?: "solid" | "outline" | "minimal"
+  animation?: "none" | "fade" | "slide"
+  layout?: "grid" | "carousel" | "list"
+  columns?: number
+  itemCount?: number
+  collection?: string
+  background?: "surface" | "muted" | "ink"
+  spacing?: "tight" | "comfortable" | "spacious"
+  handle?: string
+}
+
+export interface HomepageSection {
+  id: string
+  type: HomepageSectionType
+  name: string
+  visible: boolean
+  /** Footer and similar structural sections cannot be deleted. */
+  locked: boolean
+  settings: SectionSettings
+}
+
+export interface HomepageGlobals {
+  announcementEnabled: boolean
+  announcementText: string
+  stickyHeader: boolean
+  featuredCollection: string
+  theme: "classic" | "editorial" | "minimal"
+  seasonalTheme: string
+  newsletterEnabled: boolean
+  instagramHandle: string
+  footerNote: string
+}
+
+export interface HomepageDraft {
+  sections: HomepageSection[]
+  globals: HomepageGlobals
+}
+
+export interface HomepageRevision {
+  id: string
+  label: string
+  author: string
+  at: string
+  published: boolean
+}
+
 export interface TrendPoint {
   value: number
 }
