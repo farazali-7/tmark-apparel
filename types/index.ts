@@ -543,6 +543,109 @@ export interface ReviewDetail {
   updatedAt: string
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+ * Promotions — the marketing model.
+ *
+ * A coupon code is only the *implementation* of a promotion; this model is
+ * campaign-first (lifecycle, eligibility, performance) so the page can read as
+ * a Promotion Management Center rather than a code list. Fresh domain — no
+ * existing widget depends on it.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/** The discount mechanic. */
+export type PromotionType =
+  | "percentage"
+  | "fixed"
+  | "free_shipping"
+  | "buy_x_get_y"
+  | "bundle"
+
+/** What the promotion applies to. */
+export type PromotionScope =
+  | "entire_store"
+  | "category"
+  | "collection"
+  | "product"
+  | "vip"
+
+export type PromotionStatus =
+  | "active"
+  | "scheduled"
+  | "paused"
+  | "expired"
+  | "draft"
+
+export interface PromotionEligibility {
+  categories: string[]
+  collections: string[]
+  products: string[]
+  customerGroups: string[]
+}
+
+export interface PromotionTopProduct {
+  name: string
+  image: string
+  uses: number
+}
+
+export interface PromotionTopCustomer {
+  name: string
+  initials: string
+  uses: number
+  spend: number
+}
+
+export type PromotionActivityType =
+  | "created"
+  | "edited"
+  | "activated"
+  | "paused"
+  | "scheduled"
+  | "expired"
+
+export interface PromotionActivityEntry {
+  id: string
+  type: PromotionActivityType
+  label: string
+  at: string
+}
+
+export interface Promotion {
+  id: string
+  code: string
+  name: string
+  description: string
+  type: PromotionType
+  scope: PromotionScope
+  /** Human label for the scope, e.g. "Wedding Collection", "Sherwanis". */
+  scopeLabel: string
+  /** Percentage points, or fixed PKR amount. Zero for free shipping. */
+  value: number
+  /** Buy X / get Y quantities for buy_x_get_y and bundle mechanics. */
+  buyX: number | null
+  getY: number | null
+  status: PromotionStatus
+  vipOnly: boolean
+  minOrder: number | null
+  maxUses: number | null
+  perCustomerLimit: number | null
+  usedCount: number
+  revenue: number
+  avgOrderValue: number
+  startDate: string
+  endDate: string | null
+  autoExpire: boolean
+  visibility: "public" | "hidden"
+  featured: boolean
+  eligibility: PromotionEligibility
+  topProducts: PromotionTopProduct[]
+  topCustomers: PromotionTopCustomer[]
+  redemptionTrend: TrendPoint[]
+  activity: PromotionActivityEntry[]
+  createdAt: string
+  updatedAt: string
+}
+
 export interface TrendPoint {
   value: number
 }

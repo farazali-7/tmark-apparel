@@ -12,6 +12,9 @@ import type {
   PaymentState,
   PaymentStatus,
   ProductStatus,
+  PromotionScope,
+  PromotionStatus,
+  PromotionType,
   ReviewModerationStatus,
   ReviewStatus,
   ShippingState,
@@ -24,14 +27,22 @@ import {
   ClipboardCheck,
   Clock,
   Truck as CourierTruck,
+  Crown as CrownIcon,
+  FolderTree,
+  Gift,
   Layers as FabricIcon,
+  Package,
   PackageCheck,
   PackageOpen,
+  Percent,
   Ruler,
   ScanLine,
   Scissors,
   ShieldCheck,
   Sparkles as SparklesIcon,
+  Store,
+  Tag,
+  Truck,
   Undo2,
 } from "lucide-react"
 
@@ -186,6 +197,104 @@ export const PRIORITY_META: Record<OrderPriority, PriorityMeta> = {
   standard: { label: "Standard", tone: "neutral" },
   high: { label: "High", tone: "warning" },
   urgent: { label: "Urgent", tone: "danger" },
+}
+
+/* ── Promotions ──────────────────────────────────────────────────────── */
+
+export const PROMOTION_STATUS_META: Record<PromotionStatus, StatusMeta> = {
+  active: { label: "Active", tone: "success" },
+  scheduled: { label: "Scheduled", tone: "gold" },
+  paused: { label: "Paused", tone: "warning" },
+  expired: { label: "Expired", tone: "neutral" },
+  draft: { label: "Draft", tone: "neutral" },
+}
+
+export interface PromotionTypeMeta {
+  label: string
+  short: string
+  icon: LucideIcon
+}
+
+export const PROMOTION_TYPE_META: Record<PromotionType, PromotionTypeMeta> = {
+  percentage: { label: "Percentage Discount", short: "Percentage", icon: Percent },
+  fixed: { label: "Fixed Amount", short: "Fixed", icon: Tag },
+  free_shipping: { label: "Free Shipping", short: "Shipping", icon: Truck },
+  buy_x_get_y: { label: "Buy X Get Y", short: "BXGY", icon: Gift },
+  bundle: { label: "Bundle Offer", short: "Bundle", icon: Package },
+}
+
+export interface PromotionScopeMeta {
+  label: string
+  icon: LucideIcon
+}
+
+export const PROMOTION_SCOPE_META: Record<PromotionScope, PromotionScopeMeta> = {
+  entire_store: { label: "Entire store", icon: Store },
+  category: { label: "Category", icon: FolderTree },
+  collection: { label: "Collection", icon: SparklesIcon },
+  product: { label: "Products", icon: Package },
+  vip: { label: "VIP customers", icon: CrownIcon },
+}
+
+/** Human discount label, e.g. "25% off", "PKR 5,000 off", "Free shipping". */
+export function formatDiscount(p: {
+  type: PromotionType
+  value: number
+  buyX: number | null
+  getY: number | null
+}): string {
+  switch (p.type) {
+    case "percentage":
+      return `${p.value}% off`
+    case "fixed":
+      return `${formatCurrency(p.value)} off`
+    case "free_shipping":
+      return "Free shipping"
+    case "buy_x_get_y":
+      return `Buy ${p.buyX ?? 0} get ${p.getY ?? 0}`
+    case "bundle":
+      return `Bundle · ${p.value}% off`
+    default:
+      return "—"
+  }
+}
+
+export interface Countdown {
+  label: string
+  state: "upcoming" | "soon" | "active" | "ended"
+}
+
+/**
+ * Lifecycle-aware countdown: counts down to start for scheduled promos, to end
+ * for live ones, and flags the final week as "soon" so it can be highlighted.
+ */
+export function getCountdown(
+  startDate: string,
+  endDate: string | null,
+  now: number = Date.now()
+): Countdown {
+  const start = new Date(startDate).getTime()
+  if (now < start) {
+    return { label: `Starts in ${humanizeDuration(start - now)}`, state: "upcoming" }
+  }
+  if (!endDate) return { label: "No expiry", state: "active" }
+  const end = new Date(endDate).getTime()
+  if (now >= end) return { label: "Expired", state: "ended" }
+  const remaining = end - now
+  const soon = remaining <= 7 * 86_400_000
+  return {
+    label: `${humanizeDuration(remaining)} left`,
+    state: soon ? "soon" : "active",
+  }
+}
+
+function humanizeDuration(ms: number): string {
+  const days = Math.floor(ms / 86_400_000)
+  const hours = Math.floor((ms % 86_400_000) / 3_600_000)
+  const mins = Math.floor((ms % 3_600_000) / 60_000)
+  if (days >= 1) return `${days}d ${hours}h`
+  if (hours >= 1) return `${hours}h ${mins}m`
+  return `${mins}m`
 }
 
 /* ── Reviews ─────────────────────────────────────────────────────────── */

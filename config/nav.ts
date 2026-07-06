@@ -50,7 +50,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { title: "Orders", href: "/orders", icon: ShoppingCart, badge: "18" },
       { title: "Customers", href: "/customers", icon: Users, badge: "12" },
       { title: "Reviews", href: "/reviews", icon: MessageSquareQuote, badge: "16" },
-      { title: "Coupons", href: "/coupons", icon: Tag, disabled: true },
+      { title: "Promotions", href: "/coupons", icon: Tag, badge: "14" },
     ],
   },
   {
