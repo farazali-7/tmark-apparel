@@ -63,6 +63,6 @@ export const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: "System",
-    items: [{ title: "Settings", href: "/settings", icon: Settings, disabled: true }],
+    items: [{ title: "Settings", href: "/settings", icon: Settings }],
   },
 ]
