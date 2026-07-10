@@ -23,9 +23,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "T-Mark Apparel — Admin",
-  description:
-    "Command center for T-Mark Apparel, luxury menswear & bespoke tailoring.",
+  title: "T-Mark Apparel",
+  description: "Luxury menswear & bespoke tailoring.",
 };
 
 export default function RootLayout({

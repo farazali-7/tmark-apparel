@@ -1,10 +1,11 @@
-import { AdminShell } from "@/components/layout/admin-shell";
-import { BannersView } from "@/features/banners/banners-view";
+import type { Metadata } from "next"
+
+import { BannersView } from "@/features/banners/banners-view"
+
+export const metadata: Metadata = {
+  title: "Campaigns",
+}
 
 export default function BannersPage() {
-  return (
-    <AdminShell>
-      <BannersView />
-    </AdminShell>
-  );
+  return <BannersView />
 }

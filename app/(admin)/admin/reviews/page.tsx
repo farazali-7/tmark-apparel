@@ -1,10 +1,11 @@
-import { AdminShell } from "@/components/layout/admin-shell";
-import { ReviewsView } from "@/features/reviews/reviews-view";
+import type { Metadata } from "next"
+
+import { ReviewsView } from "@/features/reviews/reviews-view"
+
+export const metadata: Metadata = {
+  title: "Reviews",
+}
 
 export default function ReviewsPage() {
-  return (
-    <AdminShell>
-      <ReviewsView />
-    </AdminShell>
-  );
+  return <ReviewsView />
 }

@@ -1,10 +1,11 @@
-import { AdminShell } from "@/components/layout/admin-shell";
-import { OrdersView } from "@/features/orders/orders-view";
+import type { Metadata } from "next"
+
+import { OrdersView } from "@/features/orders/orders-view"
+
+export const metadata: Metadata = {
+  title: "Orders",
+}
 
 export default function OrdersPage() {
-  return (
-    <AdminShell>
-      <OrdersView />
-    </AdminShell>
-  );
+  return <OrdersView />
 }

@@ -1,10 +1,11 @@
-import { AdminShell } from "@/components/layout/admin-shell";
-import { CollectionsView } from "@/features/collections/collections-view";
+import type { Metadata } from "next"
+
+import { CollectionsView } from "@/features/collections/collections-view"
+
+export const metadata: Metadata = {
+  title: "Collections",
+}
 
 export default function CollectionsPage() {
-  return (
-    <AdminShell>
-      <CollectionsView />
-    </AdminShell>
-  );
+  return <CollectionsView />
 }

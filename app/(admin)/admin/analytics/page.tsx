@@ -1,10 +1,11 @@
-import { AdminShell } from "@/components/layout/admin-shell";
-import { AnalyticsView } from "@/features/analytics/analytics-view";
+import type { Metadata } from "next"
+
+import { AnalyticsView } from "@/features/analytics/analytics-view"
+
+export const metadata: Metadata = {
+  title: "Analytics",
+}
 
 export default function AnalyticsPage() {
-  return (
-    <AdminShell>
-      <AnalyticsView />
-    </AdminShell>
-  );
+  return <AnalyticsView />
 }

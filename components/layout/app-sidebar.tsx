@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Scissors } from "lucide-react"
 
-import { NAV_GROUPS } from "@/config/nav"
+import { ADMIN_ROOT, NAV_GROUPS, isNavItemActive } from "@/config/nav"
 import {
   Sidebar,
   SidebarContent,
@@ -27,7 +27,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader className="h-14 justify-center border-b px-3">
         <Link
-          href="/"
+          href={ADMIN_ROOT}
           className="flex items-center gap-2.5 overflow-hidden rounded-md px-1 py-1"
         >
           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-foreground text-background shadow-sm">
@@ -57,10 +57,7 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarMenu className="gap-0.5">
               {group.items.map((item) => {
-                const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href)
+                const isActive = isNavItemActive(pathname, item.href)
 
                 if (item.disabled) {
                   return (

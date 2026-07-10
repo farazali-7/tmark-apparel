@@ -22,6 +22,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command"
+import { ADMIN_ROOT } from "@/config/nav"
 
 export const OPEN_COMMAND_EVENT = "tmark:open-command"
 
@@ -57,11 +58,13 @@ export function CommandMenu() {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Navigate">
-          <CommandItem onSelect={() => run(() => router.push("/"))}>
+          <CommandItem onSelect={() => run(() => router.push(ADMIN_ROOT))}>
             <LayoutDashboard />
             Dashboard
           </CommandItem>
-          <CommandItem onSelect={() => run(() => router.push("/products"))}>
+          <CommandItem
+            onSelect={() => run(() => router.push(`${ADMIN_ROOT}/products`))}
+          >
             <Package />
             Products
           </CommandItem>

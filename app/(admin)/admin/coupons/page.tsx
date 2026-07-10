@@ -1,10 +1,11 @@
-import { AdminShell } from "@/components/layout/admin-shell";
-import { PromotionsView } from "@/features/promotions/promotions-view";
+import type { Metadata } from "next"
+
+import { PromotionsView } from "@/features/promotions/promotions-view"
+
+export const metadata: Metadata = {
+  title: "Promotions",
+}
 
 export default function CouponsPage() {
-  return (
-    <AdminShell>
-      <PromotionsView />
-    </AdminShell>
-  );
+  return <PromotionsView />
 }

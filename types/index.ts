@@ -1,7 +1,9 @@
 /**
- * Domain models for the T-Mark Apparel admin.
+ * Domain models for T-Mark Apparel — admin and storefront.
  * UI-only: these mirror the shapes the API will eventually return.
  */
+
+import type { IconType } from "react-icons"
 
 export type ProductStatus = "active" | "draft" | "archived"
 
@@ -777,4 +779,71 @@ export interface Metric {
   comparison: string
   spark: TrendPoint[]
   intent?: "default" | "warning"
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            Storefront (public site)                        */
+/* -------------------------------------------------------------------------- */
+
+/** A link in the storefront chrome. `href` is "#" until the route exists. */
+export interface SiteLink {
+  label: string
+  href: string
+}
+
+/**
+ * One announcement in the top bar. Split into segments so a single message can
+ * mix plain copy with an inline link without dangerous HTML injection.
+ */
+export interface AnnouncementSegment {
+  text: string
+  href?: string
+}
+
+export type Announcement = AnnouncementSegment[]
+
+export interface SiteLinkColumn {
+  title: string
+  links: SiteLink[]
+}
+
+/** An info column pairs an image, a lede and one or more calls to action. */
+export interface InfoColumn extends SiteLinkColumn {
+  body: string
+}
+
+/**
+ * Some payment brands have no icon in the simple-icons set (Affirm, UnionPay),
+ * so they fall back to a text pill. Modelled as a union rather than
+ * `Icon: IconType | null` so the fallback branch is impossible to forget.
+ */
+export type PaymentMethod =
+  | { label: string; icon: IconType; color: string }
+  | { label: string; icon?: never; color?: never }
+
+export interface SocialLink {
+  label: string
+  href: string
+  icon: IconType
+}
+
+export interface CategoryTile extends SiteLink {
+  /** Alt text for the tile's media. Falls back to `label` when omitted. */
+  mediaLabel?: string
+}
+
+export interface FeaturedProduct {
+  id: string
+  name: string
+  href: string
+}
+
+export interface HeroSlideContent {
+  id: string
+  headingLines: string[]
+  eyebrow: string
+  cta: SiteLink
+  mediaLabel: string
+  /** Renders the play/pause control. Only meaningful for video media. */
+  hasVideo?: boolean
 }
