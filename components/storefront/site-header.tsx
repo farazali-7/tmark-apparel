@@ -89,7 +89,7 @@ export function SiteHeader() {
             focusRing
           )}
         >
-          CANALI
+          T-Mark Apparel
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:flex items-center gap-7 lg:ml-8">

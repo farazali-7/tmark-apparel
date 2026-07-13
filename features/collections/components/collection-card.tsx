@@ -1,12 +1,20 @@
 "use client"
 
-import { Eye, Package } from "lucide-react"
+import { Eye, Package, Zap } from "lucide-react"
 
 import { CampaignCover } from "@/components/shared/campaign-cover"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { CollectionActions } from "@/features/collections/components/collection-actions"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
+  CollectionActions,
+  type CollectionAction,
+} from "@/features/collections/components/collection-actions"
 import {
   COLLECTION_STATUS_META,
   formatNumber,
@@ -21,6 +29,7 @@ interface CollectionCardProps {
   onSelectToggle: (id: string) => void
   onView: (collection: Collection) => void
   onDelete: (collection: Collection) => void
+  onAction: (action: CollectionAction, collection: Collection) => void
 }
 
 export function CollectionCard({
@@ -29,6 +38,7 @@ export function CollectionCard({
   onSelectToggle,
   onView,
   onDelete,
+  onAction,
 }: CollectionCardProps) {
   return (
     <div
@@ -94,6 +104,19 @@ export function CollectionCard({
 
       <div className="flex items-center justify-between gap-2 p-3.5">
         <div className="flex min-w-0 flex-wrap items-center gap-1">
+          {collection.type === "smart" ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-1 rounded-md border border-dashed px-1.5 py-0.5 text-xs text-muted-foreground">
+                  <Zap className="size-3" /> Smart
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                Updates automatically — {collection.rules.length}{" "}
+                {collection.rules.length === 1 ? "rule" : "rules"}
+              </TooltipContent>
+            </Tooltip>
+          ) : null}
           {collection.categories.slice(0, 2).map((cat) => (
             <span
               key={cat}
@@ -117,6 +140,7 @@ export function CollectionCard({
             collection={collection}
             onView={onView}
             onDelete={onDelete}
+            onAction={onAction}
           />
         </div>
       </div>

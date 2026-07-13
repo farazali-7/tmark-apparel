@@ -38,9 +38,11 @@ import {
 } from "@/components/ui/sheet"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { CATEGORIES, SEASONS } from "@/lib/constants"
+import { SmartRuleBuilder } from "@/features/collections/components/smart-rule-builder"
+import { CATEGORIES, COLLECTION_TYPE_META, SEASONS } from "@/lib/constants"
 import { products } from "@/lib/mock-data/products"
 import { cn } from "@/lib/utils"
+import type { Collection } from "@/types"
 
 const pickerProducts = products.map((p) => ({
   id: p.id,
@@ -58,8 +60,18 @@ const schema = z
     slug: z.string().min(2, "Slug is required"),
     description: z.string().max(280, "Keep it under 280 characters").optional(),
     season: z.string().min(1, "Select a season"),
+    type: z.enum(["manual", "smart"]),
+    ruleMatch: z.enum(["all", "any"]),
+    rules: z.array(
+      z.object({
+        id: z.string(),
+        field: z.enum(["category", "fabric", "tag", "price", "days_since_added"]),
+        operator: z.enum(["is", "is_not", "greater_than", "less_than"]),
+        value: z.string(),
+      })
+    ),
     categories: z.array(z.string()),
-    productIds: z.array(z.string()).min(1, "Add at least one product"),
+    productIds: z.array(z.string()),
     featured: z.boolean(),
     status: z.enum(["draft", "published", "scheduled"]),
     scheduledFor: z.string().optional(),
@@ -75,6 +87,30 @@ const schema = z
         message: "Pick a publish date",
       })
     }
+    // Manual collections are curated by hand; smart ones need at least one
+    // complete rule to have any members at all.
+    if (val.type === "manual" && val.productIds.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["productIds"],
+        message: "Add at least one product",
+      })
+    }
+    if (val.type === "smart") {
+      if (val.rules.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["rules"],
+          message: "Add at least one rule",
+        })
+      } else if (val.rules.some((r) => !r.value.trim())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["rules"],
+          message: "Every rule needs a value",
+        })
+      }
+    }
   })
 
 type FormValues = z.infer<typeof schema>
@@ -85,6 +121,9 @@ const DEFAULTS: FormValues = {
   slug: "",
   description: "",
   season: "",
+  type: "manual",
+  ruleMatch: "all",
+  rules: [],
   categories: [],
   productIds: [],
   featured: false,
@@ -106,11 +145,13 @@ function slugify(value: string) {
 interface CreateCollectionFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onCreate?: (collection: Collection) => void
 }
 
 export function CreateCollectionForm({
   open,
   onOpenChange,
+  onCreate,
 }: CreateCollectionFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -121,18 +162,51 @@ export function CreateCollectionForm({
   const slug = useWatch({ control: form.control, name: "slug" }) ?? ""
   const description = useWatch({ control: form.control, name: "description" }) ?? ""
   const status = useWatch({ control: form.control, name: "status" })
+  const type = useWatch({ control: form.control, name: "type" })
+  const ruleMatch = useWatch({ control: form.control, name: "ruleMatch" })
 
   React.useEffect(() => {
     if (!open) form.reset(DEFAULTS)
   }, [open, form])
 
   function onSubmit(values: FormValues) {
+    const now = new Date().toISOString()
     const verb =
       values.status === "published"
         ? "Published"
         : values.status === "scheduled"
           ? "Scheduled"
           : "Saved draft"
+
+    onCreate?.({
+      id: `col_${values.slug}`,
+      name: values.name,
+      subtitle: values.subtitle ?? "",
+      slug: values.slug,
+      description: values.description ?? "",
+      cover: values.slug,
+      season: values.season,
+      type: values.type,
+      ruleMatch: values.ruleMatch,
+      rules: values.type === "smart" ? values.rules : [],
+      status: values.status,
+      visibility: values.visibility,
+      featured: values.featured,
+      // Smart membership is evaluated by the backend; it starts empty here.
+      productCount: values.type === "manual" ? values.productIds.length : 0,
+      categories: values.categories,
+      scheduledFor:
+        values.status === "scheduled" && values.scheduledFor
+          ? new Date(values.scheduledFor).toISOString()
+          : null,
+      revenue: 0,
+      views: 0,
+      conversion: 0,
+      createdAt: now,
+      updatedAt: now,
+      activity: [{ id: "a1", label: `${verb} via collection form`, timestamp: now }],
+    })
+
     toast.success(`${verb} collection "${values.name}"`)
     onOpenChange(false)
   }
@@ -270,6 +344,54 @@ export function CreateCollectionForm({
                 title="Merchandising"
                 description="Curate the products and categories this campaign features."
               >
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Collection type</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          className="grid gap-2 sm:grid-cols-2"
+                        >
+                          {(["manual", "smart"] as const).map((t) => {
+                            const meta = COLLECTION_TYPE_META[t]
+                            const Icon = meta.icon
+                            return (
+                              <label
+                                key={t}
+                                htmlFor={`col-type-${t}`}
+                                className={cn(
+                                  "flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors",
+                                  field.value === t
+                                    ? "border-foreground bg-muted/50"
+                                    : "hover:border-foreground/30"
+                                )}
+                              >
+                                <RadioGroupItem
+                                  id={`col-type-${t}`}
+                                  value={t}
+                                  className="mt-0.5"
+                                />
+                                <span className="flex min-w-0 flex-col gap-0.5">
+                                  <span className="flex items-center gap-1.5 text-sm font-medium">
+                                    <Icon className="size-3.5" /> {meta.label}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {meta.description}
+                                  </span>
+                                </span>
+                              </label>
+                            )
+                          })}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="grid gap-4 sm:grid-cols-2">
                   <FormField
                     control={form.control}
@@ -329,25 +451,50 @@ export function CreateCollectionForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="productIds"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Products *</FormLabel>
-                      <FormDescription>
-                        Add products and drag to reorder — the first becomes the
-                        featured hero.
-                      </FormDescription>
-                      <ProductPicker
-                        products={pickerProducts}
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {type === "smart" ? (
+                  <FormField
+                    control={form.control}
+                    name="rules"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Rules *</FormLabel>
+                        <FormDescription>
+                          Matching products join on publish and stay in sync as
+                          the catalog changes.
+                        </FormDescription>
+                        <SmartRuleBuilder
+                          match={ruleMatch}
+                          onMatchChange={(m) =>
+                            form.setValue("ruleMatch", m, { shouldDirty: true })
+                          }
+                          rules={field.value}
+                          onChange={field.onChange}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="productIds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Products *</FormLabel>
+                        <FormDescription>
+                          Add products and drag to reorder — the first becomes the
+                          featured hero.
+                        </FormDescription>
+                        <ProductPicker
+                          products={pickerProducts}
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </FormSection>
 
               <FormSection

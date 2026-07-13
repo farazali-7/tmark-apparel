@@ -145,7 +145,7 @@ export const SECTION_FIELDS: Record<HomepageSectionType, FieldDescriptor[]> = {
     { key: "background", label: "Background", control: "select", options: BACKGROUND },
   ],
   instagram: [
-    { key: "title", label: "Heading", control: "text", placeholder: "Follow @tmark" },
+    { key: "title", label: "Heading", control: "text", placeholder: "Follow @tmarkapparel" },
     { key: "handle", label: "Instagram handle", control: "text", placeholder: "@tmarkapparel" },
     { key: "columns", label: "Columns", control: "segmented", options: COLUMNS, numeric: true },
     { key: "spacing", label: "Spacing", control: "select", options: SPACING },

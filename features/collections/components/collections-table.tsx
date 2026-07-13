@@ -9,9 +9,13 @@ import {
   type SortState,
 } from "@/components/shared/data-table"
 import { StatusBadge } from "@/components/shared/status-badge"
-import { CollectionActions } from "@/features/collections/components/collection-actions"
+import {
+  CollectionActions,
+  type CollectionAction,
+} from "@/features/collections/components/collection-actions"
 import {
   COLLECTION_STATUS_META,
+  COLLECTION_TYPE_META,
   VISIBILITY_META,
   formatCurrency,
   formatDate,
@@ -28,6 +32,7 @@ interface CollectionsTableProps {
   onSortChange: (id: string) => void
   onView: (collection: Collection) => void
   onDelete: (collection: Collection) => void
+  onAction: (action: CollectionAction, collection: Collection) => void
   empty?: React.ReactNode
 }
 
@@ -40,6 +45,7 @@ export function CollectionsTable({
   onSortChange,
   onView,
   onDelete,
+  onAction,
   empty,
 }: CollectionsTableProps) {
   const columns: Column<Collection>[] = [
@@ -71,6 +77,21 @@ export function CollectionsTable({
           {c.season}
         </span>
       ),
+    },
+    {
+      id: "type",
+      header: "Type",
+      headerClassName: "hidden md:table-cell",
+      cellClassName: "hidden md:table-cell",
+      cell: (c) => {
+        const meta = COLLECTION_TYPE_META[c.type]
+        return (
+          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <meta.icon className="size-3.5" />
+            {meta.label}
+          </span>
+        )
+      },
     },
     {
       id: "categories",
@@ -165,7 +186,12 @@ export function CollectionsTable({
       stickyHeader
       empty={empty}
       rowActions={(c) => (
-        <CollectionActions collection={c} onView={onView} onDelete={onDelete} />
+        <CollectionActions
+          collection={c}
+          onView={onView}
+          onDelete={onDelete}
+          onAction={onAction}
+        />
       )}
     />
   )

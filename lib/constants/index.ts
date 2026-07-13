@@ -4,6 +4,7 @@ import type {
   BannerType,
   CategoryStatus,
   CollectionStatus,
+  CollectionType,
   CustomerFit,
   CustomerStatus,
   CustomerTier,
@@ -22,6 +23,9 @@ import type {
   ReviewModerationStatus,
   ReviewStatus,
   ShippingState,
+  SmartRule,
+  SmartRuleField,
+  SmartRuleOperator,
   Visibility,
 } from "@/types"
 import type { LucideIcon } from "lucide-react"
@@ -37,6 +41,7 @@ import {
   Gift,
   Camera,
   Grid2x2,
+  Hand,
   Image as ImageIcon,
   Layers as FabricIcon,
   LayoutTemplate,
@@ -58,6 +63,7 @@ import {
   Tag,
   Truck,
   Undo2,
+  Zap,
 } from "lucide-react"
 
 export type StatusTone =
@@ -116,6 +122,86 @@ export const COLLECTION_STATUS_META: Record<CollectionStatus, StatusMeta> = {
   scheduled: { label: "Scheduled", tone: "gold" },
   draft: { label: "Draft", tone: "neutral" },
   archived: { label: "Archived", tone: "danger" },
+}
+
+/* ── Collections ─────────────────────────────────────────────────────────
+ * Manual vs smart is the load-bearing business distinction: manual campaigns
+ * are curated by a person, smart ones maintain themselves from rules. The
+ * rule vocabulary below is the single source for the builder, the table and
+ * the details drawer.
+ * ─────────────────────────────────────────────────────────────────────── */
+
+export interface CollectionTypeMeta {
+  label: string
+  tone: StatusTone
+  icon: LucideIcon
+  description: string
+}
+
+export const COLLECTION_TYPE_META: Record<CollectionType, CollectionTypeMeta> = {
+  manual: {
+    label: "Manual",
+    tone: "neutral",
+    icon: Hand,
+    description: "You pick and order every product yourself.",
+  },
+  smart: {
+    label: "Smart",
+    tone: "info",
+    icon: Zap,
+    description: "Products join automatically when they match your rules.",
+  },
+}
+
+export interface SmartRuleFieldMeta {
+  label: string
+  /** Operators that make sense for this field, in display order. */
+  operators: SmartRuleOperator[]
+  /** Which control the rule builder renders for the value. */
+  input: "category" | "fabric" | "text" | "number"
+  unit?: string
+}
+
+export const SMART_RULE_FIELD_META: Record<SmartRuleField, SmartRuleFieldMeta> = {
+  category: { label: "Category", operators: ["is", "is_not"], input: "category" },
+  fabric: { label: "Fabric", operators: ["is", "is_not"], input: "fabric" },
+  tag: { label: "Product tag", operators: ["is", "is_not"], input: "text" },
+  price: {
+    label: "Price",
+    operators: ["greater_than", "less_than"],
+    input: "number",
+    unit: "PKR",
+  },
+  days_since_added: {
+    label: "Days since added",
+    operators: ["less_than", "greater_than"],
+    input: "number",
+    unit: "days",
+  },
+}
+
+export const SMART_RULE_OPERATOR_META: Record<SmartRuleOperator, { label: string }> = {
+  is: { label: "is" },
+  is_not: { label: "is not" },
+  greater_than: { label: "is greater than" },
+  less_than: { label: "is less than" },
+}
+
+/** One-line human reading of a rule, e.g. "Price is greater than PKR 150,000". */
+export function formatSmartRule(rule: SmartRule): string {
+  if (rule.field === "price") {
+    return `Price ${SMART_RULE_OPERATOR_META[rule.operator].label} ${formatCurrency(
+      Number(rule.value) || 0
+    )}`
+  }
+  if (rule.field === "days_since_added") {
+    return rule.operator === "less_than"
+      ? `Added within the last ${rule.value} days`
+      : `Added more than ${rule.value} days ago`
+  }
+  return `${SMART_RULE_FIELD_META[rule.field].label} ${
+    SMART_RULE_OPERATOR_META[rule.operator].label
+  } “${rule.value}”`
 }
 
 /* ── Orders ──────────────────────────────────────────────────────────────

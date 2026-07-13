@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { SortState } from "@/components/shared/data-table"
+import type { CollectionAction } from "@/features/collections/components/collection-actions"
 import { CollectionDetailsDrawer } from "@/features/collections/components/collection-details-drawer"
 import { CollectionHero } from "@/features/collections/components/collection-hero"
 import { CollectionsGrid } from "@/features/collections/components/collections-grid"
@@ -32,6 +33,7 @@ import type { Collection } from "@/types"
 
 const DEFAULT_FILTERS: CollectionFilters = {
   status: "all",
+  type: "all",
   season: "all",
   featured: "all",
 }
@@ -112,6 +114,7 @@ export function CollectionsView() {
       )
         return false
       if (filters.status !== "all" && c.status !== filters.status) return false
+      if (filters.type !== "all" && c.type !== filters.type) return false
       if (filters.season !== "all" && c.season !== filters.season) return false
       if (filters.featured === "featured" && !c.featured) return false
       if (filters.featured === "standard" && c.featured) return false
@@ -167,6 +170,93 @@ export function CollectionsView() {
     toast.success(
       ids.length > 1 ? `${ids.length} collections deleted` : "Collection deleted"
     )
+  }
+
+  function patchItems(ids: string[], patch: (c: Collection) => Partial<Collection>) {
+    const now = new Date().toISOString()
+    setItems((prev) =>
+      prev.map((c) =>
+        ids.includes(c.id) ? { ...c, ...patch(c), updatedAt: now } : c
+      )
+    )
+  }
+
+  function archiveCollections(ids: string[]) {
+    // An archived campaign leaves the storefront entirely, so it also loses
+    // its featured slot — otherwise it would linger in the hero.
+    patchItems(ids, () => ({
+      status: "archived",
+      featured: false,
+      visibility: "hidden",
+    }))
+    setSelectedIds((prev) => prev.filter((id) => !ids.includes(id)))
+    toast.success(
+      ids.length > 1 ? `${ids.length} collections archived` : "Collection archived"
+    )
+  }
+
+  function handleRowAction(action: CollectionAction, collection: Collection) {
+    switch (action) {
+      case "feature":
+        patchItems([collection.id], (c) => ({ featured: !c.featured }))
+        toast.success(
+          collection.featured
+            ? `Removed “${collection.name}” from featured`
+            : `“${collection.name}” marked as featured`
+        )
+        break
+      case "toggle-visibility":
+        patchItems([collection.id], (c) => ({
+          visibility: c.visibility === "visible" ? "hidden" : "visible",
+        }))
+        toast.success(
+          collection.visibility === "visible"
+            ? `“${collection.name}” hidden from the storefront`
+            : `“${collection.name}” is visible on the storefront`
+        )
+        break
+      case "archive":
+        archiveCollections([collection.id])
+        break
+      case "restore":
+        patchItems([collection.id], () => ({ status: "draft" }))
+        toast.success(`“${collection.name}” restored to draft`)
+        break
+      case "duplicate": {
+        const now = new Date().toISOString()
+        setItems((prev) => [
+          {
+            ...collection,
+            id: `col_${Date.now()}`,
+            name: `${collection.name} (Copy)`,
+            slug: `${collection.slug}-copy`,
+            status: "draft",
+            visibility: "hidden",
+            featured: false,
+            revenue: 0,
+            views: 0,
+            conversion: 0,
+            scheduledFor: null,
+            createdAt: now,
+            updatedAt: now,
+            activity: [
+              {
+                id: "a1",
+                label: `Duplicated from ${collection.name}`,
+                timestamp: now,
+              },
+            ],
+          },
+          ...prev,
+        ])
+        toast.success(`Duplicated “${collection.name}” as a draft`)
+        break
+      }
+    }
+  }
+
+  function handleCreate(collection: Collection) {
+    setItems((prev) => [collection, ...prev])
   }
 
   function clearFilters() {
@@ -290,6 +380,7 @@ export function CollectionsView() {
                 onSelectToggle={toggleOne}
                 onView={openDetails}
                 onDelete={setDeleteTarget}
+                onAction={handleRowAction}
               />
             )
           ) : (
@@ -302,6 +393,7 @@ export function CollectionsView() {
               onSortChange={handleSortColumn}
               onView={openDetails}
               onDelete={setDeleteTarget}
+              onAction={handleRowAction}
               empty={emptyState}
             />
           )}
@@ -327,7 +419,7 @@ export function CollectionsView() {
           variant="ghost"
           size="sm"
           className="rounded-full"
-          onClick={() => toast.success(`${selectedIds.length} collections archived`)}
+          onClick={() => archiveCollections(selectedIds)}
         >
           <Archive className="size-4" /> Archive
         </Button>
@@ -351,7 +443,11 @@ export function CollectionsView() {
         }}
       />
 
-      <CreateCollectionForm open={createOpen} onOpenChange={setCreateOpen} />
+      <CreateCollectionForm
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreate={handleCreate}
+      />
 
       <ConfirmDialog
         open={!!deleteTarget}

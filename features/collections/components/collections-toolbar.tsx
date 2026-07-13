@@ -17,6 +17,7 @@ import type { SortState } from "@/components/shared/data-table"
 
 export interface CollectionFilters {
   status: string
+  type: string
   season: string
   featured: string
 }
@@ -49,6 +50,12 @@ const STATUS_OPTIONS = [
   { value: "scheduled", label: "Scheduled" },
   { value: "draft", label: "Draft" },
   { value: "archived", label: "Archived" },
+]
+
+const TYPE_OPTIONS = [
+  { value: "all", label: "All types" },
+  { value: "manual", label: "Manual" },
+  { value: "smart", label: "Smart" },
 ]
 
 const FEATURED_OPTIONS = [
@@ -95,6 +102,22 @@ export function CollectionsToolbar({
             </SelectTrigger>
             <SelectContent>
               {STATUS_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.type}
+            onValueChange={(v) => onFilterChange("type", v)}
+          >
+            <SelectTrigger size="sm" className="hidden h-9 w-[7.5rem] sm:flex">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TYPE_OPTIONS.map((o) => (
                 <SelectItem key={o.value} value={o.value}>
                   {o.label}
                 </SelectItem>

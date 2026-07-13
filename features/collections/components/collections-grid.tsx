@@ -1,6 +1,7 @@
 "use client"
 
 import { CollectionCard } from "@/features/collections/components/collection-card"
+import type { CollectionAction } from "@/features/collections/components/collection-actions"
 import type { Collection } from "@/types"
 
 interface CollectionsGridProps {
@@ -9,6 +10,7 @@ interface CollectionsGridProps {
   onSelectToggle: (id: string) => void
   onView: (collection: Collection) => void
   onDelete: (collection: Collection) => void
+  onAction: (action: CollectionAction, collection: Collection) => void
 }
 
 export function CollectionsGrid({
@@ -17,6 +19,7 @@ export function CollectionsGrid({
   onSelectToggle,
   onView,
   onDelete,
+  onAction,
 }: CollectionsGridProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -28,6 +31,7 @@ export function CollectionsGrid({
           onSelectToggle={onSelectToggle}
           onView={onView}
           onDelete={onDelete}
+          onAction={onAction}
         />
       ))}
     </div>

@@ -23,7 +23,8 @@ export function NewsletterForm() {
     <div>
       <h3 className="font-serif uppercase text-xl tracking-wide mb-3">Newsletter</h3>
       <p className="text-sm text-white/80 mb-5 max-w-sm">
-        Sign up to receive email updates on Canali&apos;s latest collections, campaigns and videos.
+        Subscribe to receive updates about new collections, exclusive offers and style
+        inspiration from T-Mark Apparel.
       </p>
 
       <form

@@ -8,11 +8,11 @@ import { SiteTopBar } from "@/components/storefront/site-top-bar"
 
 export const metadata: Metadata = {
   title: {
-    default: "Canali — Luxury Menswear",
-    template: "%s — Canali",
+    default: "T-Mark Apparel — Luxury Menswear",
+    template: "%s — T-Mark Apparel",
   },
   description:
-    "Canali. Italian luxury menswear, tailoring and Made to Measure.",
+    "T-Mark Apparel. Luxury menswear, ready-to-wear and made-to-measure tailoring, crafted since 2003.",
 }
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {

@@ -24,7 +24,7 @@ export function SiteTopBar() {
         className={cn(SITE_CONTAINER, "h-9 flex items-center justify-between gap-4")}
       >
         <Link href="#" className={cn("hidden sm:inline hover:underline whitespace-nowrap", focusRing)}>
-          Find a Boutique
+          Find a Store
         </Link>
 
         <div
@@ -67,9 +67,15 @@ export function SiteTopBar() {
           </button>
         </div>
 
-        <Link href="#" className={cn("hidden sm:inline hover:underline whitespace-nowrap", focusRing)}>
-          Customer Care
-        </Link>
+        <div className="hidden items-center gap-3 whitespace-nowrap sm:flex">
+          <Link href="/account" className={cn("hover:underline", focusRing)}>
+            Sign In
+          </Link>
+          <span aria-hidden className="h-3 w-px bg-white/40" />
+          <Link href="/account?tab=signup" className={cn("hover:underline", focusRing)}>
+            Create Account
+          </Link>
+        </div>
       </div>
     </div>
   )

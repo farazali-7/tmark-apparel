@@ -13,9 +13,10 @@ interface HeroSlideProps {
    * are <h2> so the document outline stays valid.
    */
   headingLevel: 1 | 2
+  className?: string
 }
 
-export function HeroSlide({ content, headingLevel }: HeroSlideProps) {
+export function HeroSlide({ content, headingLevel, className }: HeroSlideProps) {
   const { id, headingLines, eyebrow, cta, mediaLabel, hasVideo } = content
   const Heading = headingLevel === 1 ? "h1" : "h2"
   const headingId = `${id}-heading`
@@ -23,7 +24,10 @@ export function HeroSlide({ content, headingLevel }: HeroSlideProps) {
   return (
     <section
       aria-labelledby={headingId}
-      className="relative h-[78vh] min-h-[420px] max-h-[820px] w-full overflow-hidden"
+      className={cn(
+        "relative h-[78vh] min-h-[420px] max-h-[820px] w-full overflow-hidden",
+        className
+      )}
     >
       <MediaPlaceholder label={mediaLabel} className="absolute inset-0 w-full h-full" />
 

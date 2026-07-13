@@ -147,6 +147,31 @@ export interface Category {
 
 export type CollectionStatus = "published" | "scheduled" | "draft" | "archived"
 
+/**
+ * Manual collections are hand-curated; smart collections populate themselves
+ * from `rules` as the catalog changes — the Shopify distinction, because the
+ * two are merchandised and maintained very differently.
+ */
+export type CollectionType = "manual" | "smart"
+
+export type SmartRuleField =
+  | "category"
+  | "fabric"
+  | "tag"
+  | "price"
+  | "days_since_added"
+
+export type SmartRuleOperator = "is" | "is_not" | "greater_than" | "less_than"
+
+export interface SmartRule {
+  id: string
+  field: SmartRuleField
+  operator: SmartRuleOperator
+  value: string
+}
+
+export type SmartRuleMatch = "all" | "any"
+
 export interface Collection {
   id: string
   name: string
@@ -155,6 +180,11 @@ export interface Collection {
   description: string
   cover: string
   season: string
+  type: CollectionType
+  /** Meaningful only when `type` is "smart"; manual collections keep the default. */
+  ruleMatch: SmartRuleMatch
+  /** Empty unless `type` is "smart". */
+  rules: SmartRule[]
   status: CollectionStatus
   visibility: Visibility
   featured: boolean

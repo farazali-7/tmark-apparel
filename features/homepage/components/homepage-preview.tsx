@@ -36,7 +36,7 @@ export function HomepagePreview({
 
       {/* Storefront header */}
       <div className="flex items-center justify-between border-b bg-background/95 px-4 py-2.5">
-        <span className="font-display text-sm font-medium tracking-tight">T-Mark</span>
+        <span className="font-display text-sm font-medium tracking-tight">T-Mark Apparel</span>
         <nav className="hidden items-center gap-3 text-[0.7rem] text-muted-foreground sm:flex">
           <span>Ready to Wear</span>
           <span>Made to Measure</span>

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 
 export function InfoColumns() {
   return (
-    <section aria-label="Discover Canali" className="bg-brand-sand">
+    <section aria-label="Discover T-Mark Apparel" className="bg-brand-sand">
       <div
         className={cn(
           SITE_CONTAINER,

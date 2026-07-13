@@ -49,7 +49,7 @@ export function SiteFooter() {
         >
           <div className="flex items-center gap-6">
             <Link href="#" className="flex items-center gap-2 text-sm hover:underline">
-              <Store aria-hidden className="w-4 h-4" /> Find a Boutique
+              <Store aria-hidden className="w-4 h-4" /> Visit Our Store
             </Link>
             <Link href="#" className="flex items-center gap-2 text-sm hover:underline">
               <Globe aria-hidden className="w-4 h-4" /> International

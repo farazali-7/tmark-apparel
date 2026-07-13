@@ -15,7 +15,7 @@ export const categories: Category[] = [
     featured: true,
     displayOrder: 1,
     metaTitle: "Sherwanis | T-Mark Apparel",
-    metaDescription: "Explore T-Mark's signature sherwanis for weddings and occasions.",
+    metaDescription: "Explore T-Mark Apparel's signature sherwanis for weddings and occasions.",
     createdAt: "2026-02-10T09:00:00Z",
     updatedAt: "2026-07-02T09:00:00Z",
     activity: [
@@ -205,7 +205,7 @@ export const categories: Category[] = [
     featured: false,
     displayOrder: 10,
     metaTitle: "Accessories | T-Mark Apparel",
-    metaDescription: "Finishing touches for the complete T-Mark look.",
+    metaDescription: "Finishing touches for the complete T-Mark Apparel look.",
     createdAt: "2026-06-08T09:00:00Z",
     updatedAt: "2026-06-08T09:00:00Z",
     activity: [
@@ -226,7 +226,7 @@ export const categories: Category[] = [
     featured: false,
     displayOrder: 11,
     metaTitle: "Seasonal Sale | T-Mark Apparel",
-    metaDescription: "Limited-time pricing on selected T-Mark pieces.",
+    metaDescription: "Limited-time pricing on selected T-Mark Apparel pieces.",
     createdAt: "2026-05-26T09:00:00Z",
     updatedAt: "2026-06-05T09:00:00Z",
     activity: [

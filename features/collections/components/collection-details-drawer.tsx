@@ -10,6 +10,7 @@ import {
   Smartphone,
   Tablet,
   Trash2,
+  Zap,
 } from "lucide-react"
 
 import { CampaignCover } from "@/components/shared/campaign-cover"
@@ -30,10 +31,12 @@ import {
 } from "@/components/ui/toggle-group"
 import {
   COLLECTION_STATUS_META,
+  COLLECTION_TYPE_META,
   VISIBILITY_META,
   formatCurrency,
   formatDate,
   formatNumber,
+  formatSmartRule,
 } from "@/lib/constants"
 import { products } from "@/lib/mock-data/products"
 import { cn } from "@/lib/utils"
@@ -80,6 +83,17 @@ function StatTile({ label, value }: { label: string; value: string }) {
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-0.5 font-display text-lg font-medium tabular">{value}</p>
     </div>
+  )
+}
+
+function TypeValue({ type }: { type: Collection["type"] }) {
+  const meta = COLLECTION_TYPE_META[type]
+  const Icon = meta.icon
+  return (
+    <span className="flex items-center justify-end gap-1.5">
+      <Icon className="size-3.5 text-muted-foreground" />
+      {meta.label}
+    </span>
   )
 }
 
@@ -241,6 +255,7 @@ export function CollectionDetailsDrawer({
 
                 <div className="divide-y rounded-lg border px-3">
                   <Row label="Season" value={collection.season} />
+                  <Row label="Type" value={<TypeValue type={collection.type} />} />
                   <Row
                     label="Visibility"
                     value={
@@ -264,6 +279,34 @@ export function CollectionDetailsDrawer({
                   <Row label="Created" value={formatDate(collection.createdAt)} />
                 </div>
 
+                {collection.type === "smart" ? (
+                  <div>
+                    <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      Smart rules
+                    </p>
+                    <div className="rounded-lg border bg-muted/30 p-3">
+                      <p className="text-xs text-muted-foreground">
+                        Products join automatically when they match{" "}
+                        <span className="font-medium text-foreground">
+                          {collection.ruleMatch === "all" ? "all" : "any"}
+                        </span>{" "}
+                        of the following:
+                      </p>
+                      <ul className="mt-2 space-y-1.5">
+                        {collection.rules.map((rule) => (
+                          <li
+                            key={rule.id}
+                            className="flex items-center gap-2 text-sm"
+                          >
+                            <Zap className="size-3.5 shrink-0 text-muted-foreground" />
+                            {formatSmartRule(rule)}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ) : null}
+
                 <div>
                   <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     Categories included
@@ -283,11 +326,18 @@ export function CollectionDetailsDrawer({
 
               <TabsContent value="products" className="p-4 sm:p-5">
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-sm font-medium">
-                    {formatNumber(collection.productCount)} products
-                  </p>
+                  <div>
+                    <p className="text-sm font-medium">
+                      {formatNumber(collection.productCount)} products
+                    </p>
+                    {collection.type === "smart" ? (
+                      <p className="text-xs text-muted-foreground">
+                        Matched automatically by rules
+                      </p>
+                    ) : null}
+                  </div>
                   <Button variant="outline" size="xs">
-                    Manage products
+                    {collection.type === "smart" ? "Edit rules" : "Manage products"}
                   </Button>
                 </div>
                 <ul className="divide-y">
@@ -328,7 +378,7 @@ export function CollectionDetailsDrawer({
               <TabsContent value="seo" className="space-y-4 p-4 sm:p-5">
                 <div className="divide-y rounded-lg border px-3">
                   <Row label="URL slug" value={`/collections/${collection.slug}`} />
-                  <Row label="Meta title" value={`${collection.name} | T-Mark`} />
+                  <Row label="Meta title" value={`${collection.name} | T-Mark Apparel`} />
                 </div>
                 <div>
                   <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">

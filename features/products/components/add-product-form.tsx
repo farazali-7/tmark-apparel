@@ -533,7 +533,7 @@ export function AddProductForm({ open, onOpenChange }: AddProductFormProps) {
                     <FormItem>
                       <FormLabel>Meta title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Maroon Velvet Sherwani | T-Mark" {...field} />
+                        <Input placeholder="Maroon Velvet Sherwani | T-Mark Apparel" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -10,10 +10,8 @@ import {
   SiMastercard,
   SiPaypal,
   SiPinterest,
-  SiSinaweibo,
-  SiVimeo,
+  SiTiktok,
   SiVisa,
-  SiWechat,
   SiX,
   SiYoutube,
 } from "react-icons/si"
@@ -43,13 +41,15 @@ export const SITE_NAV: SiteLink[] = [
   { label: "Accessories", href: "#" },
   { label: "Highlights", href: "#" },
   { label: "Made to Measure", href: "#" },
-  { label: "Canali World", href: "#" },
+  { label: "Our Brand", href: "#" },
 ]
 
 export const ANNOUNCEMENTS: Announcement[] = [
   [
-    { text: "Subscribe to the newsletter", href: "#" },
-    { text: " to stay up to date with the latest news" },
+    { text: "Subscribe", href: "#" },
+    {
+      text: " to receive exclusive updates, new collections and special offers from T-Mark Apparel.",
+    },
   ],
   [
     { text: "Express shipping and free returns on all orders. " },
@@ -59,30 +59,20 @@ export const ANNOUNCEMENTS: Announcement[] = [
 
 export const HERO_SLIDES: HeroSlideContent[] = [
   {
-    id: "high-summer",
-    headingLines: ["High", "Summer"],
+    id: "summer-collection",
+    headingLines: ["Summer", "Collection"],
     eyebrow: "New Arrivals",
     cta: { label: "Discover More", href: "#" },
-    mediaLabel: "High Summer hero",
+    mediaLabel: "Summer Collection hero",
   },
   {
-    id: "designed-for-travel",
-    headingLines: ["Designed", "for Travel"],
-    eyebrow: "Spring Summer 2026",
+    id: "crafted-for-every-occasion",
+    headingLines: ["Crafted for", "Every Occasion"],
+    eyebrow: "Spring / Summer Collection",
     cta: { label: "Discover More", href: "#" },
-    mediaLabel: "Spring Summer 2026 campaign video",
+    mediaLabel: "Spring / Summer Collection campaign video",
     hasVideo: true,
   },
-]
-
-/**
- * Unlabeled image row between the campaign hero and the category tiles.
- * Labels here are announced to assistive tech only, never printed.
- */
-export const EDITORIAL_TILES: CategoryTile[] = [
-  { label: "Summer editorial", href: "#", mediaLabel: "Summer editorial look" },
-  { label: "Loafers", href: "#", mediaLabel: "Suede loafers editorial" },
-  { label: "Linen shirts", href: "#", mediaLabel: "Linen shirt editorial" },
 ]
 
 export const CATEGORY_TILES: CategoryTile[] = [
@@ -93,69 +83,72 @@ export const CATEGORY_TILES: CategoryTile[] = [
 
 export const FEATURED_PRODUCTS: FeaturedProduct[] = [
   {
-    id: "kei-jacket",
-    name: "White double-breasted linen and silk blend modern-fit Kei jacket",
+    id: "linen-silk-jacket",
+    name: "Ivory double-breasted linen and silk blend modern-fit jacket",
     href: "#",
   },
   {
     id: "interlock-tee",
-    name: "Milk-colored interlock jersey cotton T-shirt",
+    name: "Off-white interlock jersey cotton T-shirt",
     href: "#",
   },
   {
-    id: "cargo-pants",
-    name: "Light gray linen and cotton cargo pants with drawstring",
+    id: "drawstring-trousers",
+    name: "Light grey linen and cotton trousers with drawstring",
     href: "#",
   },
   {
-    id: "baseball-cap",
-    name: "White linen and silk blend baseball cap",
+    id: "linen-silk-cap",
+    name: "White linen and silk blend cap",
     href: "#",
   },
 ]
 
 export const INFO_COLUMNS: InfoColumn[] = [
   {
-    title: "Find a Store",
-    body: "A refined aesthetic as the perfect backdrop to showcase the Canali collections each season.",
+    title: "Visit Our Store",
+    body: "Experience T-Mark Apparel in person. Our store offers a calm, considered setting in which to explore each season's collections, guided by our advisors.",
     links: [
-      { label: "Find your boutique", href: "#" },
-      { label: "Book an appointment", href: "#" },
+      { label: "Find Our Store", href: "#" },
+      { label: "Book a Consultation", href: "#" },
     ],
   },
   {
-    title: "Me by Canali",
-    body: "Me by Canali transforms the Made to Measure experience, allowing you to create a collection of both formal and casual garments.",
+    title: "Made-to-Measure",
+    body: "Create garments tailored exclusively for you through our premium Made-to-Measure experience, combining expert craftsmanship with timeless elegance.",
     links: [{ label: "Discover more", href: "#" }],
   },
   {
-    title: "Canali Care",
-    body: "The global project within which the company has decided to ascribe all its sustainability initiatives.",
+    title: "Craftsmanship & Quality",
+    body: "Every T-Mark Apparel garment is cut, finished and inspected to exacting standards — a commitment to quality, craftsmanship and your complete satisfaction, upheld since 2003.",
     links: [{ label: "Discover more", href: "#" }],
   },
 ]
 
 export const FOOTER_COLUMNS: SiteLinkColumn[] = [
   {
-    title: "Our Brand",
+    title: "About T-Mark Apparel",
     links: [
-      { label: "About Us", href: "#" },
-      { label: "Collection", href: "#" },
+      { label: "Our Story", href: "#" },
+      { label: "Collections", href: "#" },
+      { label: "Made-to-Measure", href: "#" },
+      { label: "Store Locator", href: "#" },
     ],
   },
   {
     title: "Customer Care",
     links: [
       { label: "Contact Us", href: "#" },
-      { label: "Request an appointment", href: "#" },
+      { label: "Book an Appointment", href: "#" },
+      { label: "Shipping & Returns", href: "#" },
+      { label: "FAQ", href: "#" },
     ],
   },
   {
     title: "Legal & Privacy",
     links: [
-      { label: "Website Terms of use", href: "#" },
-      { label: "General sales conditions", href: "#" },
-      { label: "Privacy", href: "#" },
+      { label: "Terms & Conditions", href: "#" },
+      { label: "Privacy Policy", href: "#" },
       { label: "Cookies", href: "#" },
       { label: "Accessibility Statement", href: "#" },
     ],
@@ -181,12 +174,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
   { label: "Facebook", href: "#", icon: SiFacebook },
   { label: "X", href: "#", icon: SiX },
   { label: "Instagram", href: "#", icon: SiInstagram },
+  { label: "TikTok", href: "#", icon: SiTiktok },
   { label: "Pinterest", href: "#", icon: SiPinterest },
   { label: "Youtube", href: "#", icon: SiYoutube },
-  { label: "Vimeo", href: "#", icon: SiVimeo },
-  { label: "Weibo", href: "#", icon: SiSinaweibo },
-  { label: "WeChat", href: "#", icon: SiWechat },
 ]
 
 export const COPYRIGHT =
-  "© 2026 Canali SpA a socio unico, soggetta a direzione e coordinamento di Canali Holding SpA - Partita I.V.A. 00694880964 - All Rights Reserved"
+  "© 2026 T-Mark Apparel. Luxury menswear, crafted since 2003. All rights reserved."
