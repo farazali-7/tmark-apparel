@@ -19,9 +19,16 @@ export function FeaturedProducts() {
           a 1px gap; both collapse at sm where the cards sit on white. */}
       <ul className="mx-auto max-w-6xl grid grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-200 sm:gap-0 sm:bg-transparent">
         {FEATURED_PRODUCTS.map((product) => (
-          <li key={product.id} className="bg-white">
-            <MediaPlaceholder label={product.name} className="aspect-[3/4] w-full" />
-            <p className="mt-3 text-sm text-neutral-700 leading-snug pr-3">{product.name}</p>
+          <li key={product.id} className="group bg-white">
+            <div className="overflow-hidden">
+              <MediaPlaceholder
+                label={product.name}
+                className="aspect-[3/4] w-full transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
+            <p className="mt-3 text-sm text-neutral-700 leading-snug pr-3 transition-colors group-hover:text-neutral-950">
+              {product.name}
+            </p>
           </li>
         ))}
       </ul>

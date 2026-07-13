@@ -9,8 +9,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-fraunces);
-  --font-heading: var(--font-fraunces);
+  --font-serif: var(--font-bodoni);
+  --font-heading: var(--font-bodoni);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
   --color-gold-muted: var(--gold-muted);
@@ -153,7 +153,7 @@
 }
 
 @utility font-display {
-  font-family: var(--font-fraunces), Georgia, serif;
+  font-family: var(--font-bodoni), Georgia, serif;
   font-optical-sizing: auto;
   letter-spacing: -0.015em;
 }

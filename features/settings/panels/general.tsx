@@ -93,7 +93,7 @@ export function BrandPanel() {
       <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-5">
         <div>
           <p className="text-sm font-medium">Brand wordmark</p>
-          <p className="text-xs text-muted-foreground">Currently using the built-in Fraunces display type.</p>
+          <p className="text-xs text-muted-foreground">Currently using the built-in Bodoni Moda display type.</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => toast("Wordmark editor coming soon")}>
           Change

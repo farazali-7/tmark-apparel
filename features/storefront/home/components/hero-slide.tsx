@@ -31,11 +31,18 @@ export function HeroSlide({ content, headingLevel, className }: HeroSlideProps) 
     >
       <MediaPlaceholder label={mediaLabel} className="absolute inset-0 w-full h-full" />
 
+      {/* Keeps white type legible over any art direction — heavier at the foot
+          where the copy sits, fading to clear so the image reads at the top. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
+      />
+
       <div className="absolute inset-0 flex items-end">
         <div className={cn(SITE_SHELL, "w-full px-6 sm:px-10 pb-16 sm:pb-24")}>
           <Heading
             id={headingId}
-            className="font-serif uppercase text-white text-5xl leading-[1.05]"
+            className="font-serif uppercase text-white text-5xl sm:text-6xl lg:text-7xl leading-[1.02] tracking-[0.02em] animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-both"
           >
             {headingLines.map((line, index) => (
               <span key={index} className="block">
@@ -44,11 +51,13 @@ export function HeroSlide({ content, headingLevel, className }: HeroSlideProps) 
             ))}
           </Heading>
 
-          <p className="mt-4 text-white text-xs tracking-[0.25em] uppercase">{eyebrow}</p>
+          <p className="mt-4 text-white text-xs tracking-[0.25em] uppercase animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both [animation-delay:140ms]">
+            {eyebrow}
+          </p>
 
           <Link
             href={cta.href}
-            className="mt-6 inline-block border border-white text-white text-xs tracking-[0.2em] uppercase px-7 py-3 hover:bg-white hover:text-neutral-900 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            className="mt-6 inline-block border border-white text-white text-xs tracking-[0.2em] uppercase px-7 py-3 hover:bg-white hover:text-neutral-900 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both [animation-delay:260ms]"
           >
             {cta.label}
           </Link>
