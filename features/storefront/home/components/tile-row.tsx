@@ -23,18 +23,25 @@ export function TileRow({ tiles, ariaLabel, showLabels = false }: TileRowProps) 
           <Link
             key={tile.label}
             href={tile.href}
-            className="relative block aspect-[4/5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-neutral-800"
+            className="group relative block aspect-[4/5] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-neutral-800"
           >
             <MediaPlaceholder
               label={tile.mediaLabel ?? tile.label}
-              className="absolute inset-0 w-full h-full"
+              className="absolute inset-0 w-full h-full transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
             />
             {showLabels ? (
-              <span className="absolute inset-x-0 bottom-0 flex justify-center pb-6">
-                <span className="font-serif text-white text-2xl tracking-[0.1em] uppercase drop-shadow">
-                  {tile.label}
+              <>
+                {/* Grounds the label so it stays legible over lighter imagery. */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent"
+                />
+                <span className="absolute inset-x-0 bottom-0 flex justify-center pb-6">
+                  <span className="font-serif text-white text-2xl tracking-[0.1em] uppercase drop-shadow transition-transform duration-300 group-hover:-translate-y-1">
+                    {tile.label}
+                  </span>
                 </span>
-              </span>
+              </>
             ) : (
               <span className="sr-only">{tile.label}</span>
             )}

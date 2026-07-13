@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { Menu, Search, X } from "lucide-react"
 
@@ -16,16 +16,59 @@ const MOBILE_NAV_ID = "site-mobile-nav"
  * the viewport top, so swapping to `fixed top-0` is seamless.
  */
 const SOLID_SCROLL_THRESHOLD = 36
+/**
+ * The header only starts retracting once we're a comfortable distance into the
+ * page — pulling it up the moment it turns solid feels abrupt so close to the top.
+ */
+const HIDE_SCROLL_THRESHOLD = 120
+/**
+ * Scrolling up reveals the header more eagerly than scrolling down hides it, so a
+ * small flick upward brings the whole nav back rather than dragging it 1:1.
+ */
+const REVEAL_MULTIPLIER = 1.8
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  // How far the header is currently pulled up, in px (0 = fully open, height = hidden).
+  const [offset, setOffset] = useState(0)
+  const lastScrollY = useRef(0)
+  const headerRef = useRef<HTMLElement>(null)
+  const frame = useRef(0)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > SOLID_SCROLL_THRESHOLD)
-    onScroll()
+    const update = () => {
+      const y = Math.max(0, window.scrollY)
+      setScrolled(y > SOLID_SCROLL_THRESHOLD)
+
+      const height = headerRef.current?.offsetHeight ?? 80
+      const rawDelta = y - lastScrollY.current
+      lastScrollY.current = y
+
+      // Down tracks the wheel 1:1 (pulls the header up); up is amplified so a
+      // small flick reveals the whole nav rather than dragging it back inch by inch.
+      const delta = rawDelta < 0 ? rawDelta * REVEAL_MULTIPLIER : rawDelta
+
+      // Near the top the header always rides fully open; past the reveal point it
+      // rides with the scroll, clamped so it never travels past its own height.
+      setOffset((current) =>
+        y <= HIDE_SCROLL_THRESHOLD
+          ? 0
+          : Math.min(height, Math.max(0, current + delta))
+      )
+    }
+
+    // Coalesce bursts of scroll events into one paint for buttery tracking.
+    const onScroll = () => {
+      cancelAnimationFrame(frame.current)
+      frame.current = requestAnimationFrame(update)
+    }
+    update()
     window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
+    return () => {
+      cancelAnimationFrame(frame.current)
+      window.removeEventListener("scroll", onScroll)
+    }
   }, [])
 
   // Escape closes the mobile drawer — expected of any disclosure widget.
@@ -51,10 +94,19 @@ export function SiteHeader() {
   )
   const iconColor = solid ? "text-neutral-800" : "text-white"
 
+  // Only the solid, pinned header rides with the scroll; the drawer pins it open
+  // so the mobile menu never slides away mid-interaction.
+  const translateY = solid && !menuOpen ? offset : 0
+
   return (
     <header
+      ref={headerRef}
+      style={{ transform: `translate3d(0, -${translateY}px, 0)` }}
       className={cn(
-        "inset-x-0 z-40 transition-colors duration-200",
+        "inset-x-0 z-40 will-change-transform",
+        // Colours ease; the transform stays untransitioned so it tracks the
+        // wheel exactly, 1px of scroll to 1px of travel.
+        "transition-[background-color,border-color] duration-300",
         solid
           ? "fixed top-0 bg-white border-b border-neutral-200"
           : "absolute top-9 bg-transparent"

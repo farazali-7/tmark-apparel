@@ -2,6 +2,7 @@
 
 import { Area, AreaChart, ResponsiveContainer } from "recharts"
 
+import { useMounted } from "@/hooks/use-mounted"
 import type { TrendPoint } from "@/types"
 
 interface SparklineProps {
@@ -15,9 +16,12 @@ export function Sparkline({ data, positive = true, className }: SparklineProps) 
   const stroke = positive
     ? "oklch(0.55 0.12 155)"
     : "oklch(0.58 0.16 25)"
+  // Defer to the client so the responsive container never measures -1 at build.
+  const mounted = useMounted()
 
   return (
     <div className={className}>
+      {mounted ? (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 2, bottom: 2, left: 0, right: 0 }}>
           <defs>
@@ -37,6 +41,7 @@ export function Sparkline({ data, positive = true, className }: SparklineProps) 
           />
         </AreaChart>
       </ResponsiveContainer>
+      ) : null}
     </div>
   )
 }
