@@ -8,11 +8,11 @@ import { SiteTopBar } from "@/components/storefront/site-top-bar"
 
 export const metadata: Metadata = {
   title: {
-    default: "T-Mark Apparel — Luxury Menswear",
+    default: "T-Mark Apparel — Couture Menswear, Lahore",
     template: "%s — T-Mark Apparel",
   },
   description:
-    "T-Mark Apparel. Luxury menswear, ready-to-wear and made-to-measure tailoring, crafted since 2003.",
+    "Couture menswear tailored in Lahore — sherwani, prince coats, ceremonial waistcoats and made-to-measure suiting. Shipped worldwide.",
 }
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {

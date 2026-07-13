@@ -5,7 +5,8 @@ import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { SITE_CONTAINER } from "@/components/storefront/container"
-import { ANNOUNCEMENTS } from "@/lib/mock-data/storefront"
+import { UTILITY_NAV } from "@/config/navigation"
+import { ANNOUNCEMENTS } from "@/content/homepage"
 import { cn } from "@/lib/utils"
 
 const focusRing =
@@ -23,8 +24,11 @@ export function SiteTopBar() {
       <div
         className={cn(SITE_CONTAINER, "h-9 flex items-center justify-between gap-4")}
       >
-        <Link href="#" className={cn("hidden sm:inline hover:underline whitespace-nowrap", focusRing)}>
-          Find a Store
+        <Link
+          href={UTILITY_NAV.findStore.href}
+          className={cn("hidden sm:inline hover:underline whitespace-nowrap", focusRing)}
+        >
+          {UTILITY_NAV.findStore.label}
         </Link>
 
         <div
@@ -68,12 +72,15 @@ export function SiteTopBar() {
         </div>
 
         <div className="hidden items-center gap-3 whitespace-nowrap sm:flex">
-          <Link href="/account" className={cn("hover:underline", focusRing)}>
-            Sign In
+          <Link href={UTILITY_NAV.signIn.href} className={cn("hover:underline", focusRing)}>
+            {UTILITY_NAV.signIn.label}
           </Link>
           <span aria-hidden className="h-3 w-px bg-white/40" />
-          <Link href="/account?tab=signup" className={cn("hover:underline", focusRing)}>
-            Create Account
+          <Link
+            href={UTILITY_NAV.createAccount.href}
+            className={cn("hover:underline", focusRing)}
+          >
+            {UTILITY_NAV.createAccount.label}
           </Link>
         </div>
       </div>

@@ -2,12 +2,15 @@ import Link from "next/link"
 
 import { SITE_CONTAINER } from "@/components/storefront/container"
 import { MediaPlaceholder } from "@/components/storefront/media-placeholder"
-import { INFO_COLUMNS } from "@/lib/mock-data/storefront"
+import { INFO_COLUMNS } from "@/content/homepage"
 import { cn } from "@/lib/utils"
 
 export function InfoColumns() {
   return (
-    <section aria-label="Discover T-Mark Apparel" className="bg-brand-sand">
+    <section aria-labelledby="discover-heading" className="bg-brand-sand">
+      <h2 id="discover-heading" className="sr-only">
+        Discover T-Mark Apparel
+      </h2>
       <div
         className={cn(
           SITE_CONTAINER,

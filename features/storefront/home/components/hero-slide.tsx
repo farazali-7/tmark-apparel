@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 
 import { SITE_SHELL } from "@/components/storefront/container"
@@ -17,7 +18,8 @@ interface HeroSlideProps {
 }
 
 export function HeroSlide({ content, headingLevel, className }: HeroSlideProps) {
-  const { id, headingLines, eyebrow, cta, mediaLabel, hasVideo } = content
+  const { id, headingLines, eyebrow, cta, secondaryCta, imageSrc, mediaLabel, hasVideo } =
+    content
   const Heading = headingLevel === 1 ? "h1" : "h2"
   const headingId = `${id}-heading`
 
@@ -29,7 +31,21 @@ export function HeroSlide({ content, headingLevel, className }: HeroSlideProps) 
         className
       )}
     >
-      <MediaPlaceholder label={mediaLabel} className="absolute inset-0 w-full h-full" />
+      {imageSrc ? (
+        // next/image serves a resized, compressed (WebP) version at the display
+        // size, so the huge source file never ships to the browser. `priority`
+        // on the first hero; object-cover fills the frame with no layout shift.
+        <Image
+          src={imageSrc}
+          alt={mediaLabel}
+          fill
+          priority={headingLevel === 1}
+          sizes="100vw"
+          className="object-cover"
+        />
+      ) : (
+        <MediaPlaceholder label={mediaLabel} className="absolute inset-0 w-full h-full" />
+      )}
 
       {/* Keeps white type legible over any art direction — heavier at the foot
           where the copy sits, fading to clear so the image reads at the top. */}
@@ -55,12 +71,25 @@ export function HeroSlide({ content, headingLevel, className }: HeroSlideProps) 
             {eyebrow}
           </p>
 
-          <Link
-            href={cta.href}
-            className="mt-6 inline-block border border-white text-white text-xs tracking-[0.2em] uppercase px-7 py-3 hover:bg-white hover:text-neutral-900 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both [animation-delay:260ms]"
-          >
-            {cta.label}
-          </Link>
+          {/* Two CTAs split the buyer types: bespoke (primary) vs. browse now
+              (secondary). The second is optional per slide. */}
+          <div className="mt-6 flex flex-wrap items-center gap-x-7 gap-y-3 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both [animation-delay:260ms]">
+            <Link
+              href={cta.href}
+              className="inline-block border border-white text-white text-xs tracking-[0.2em] uppercase px-7 py-3 hover:bg-white hover:text-neutral-900 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            >
+              {cta.label}
+            </Link>
+
+            {secondaryCta ? (
+              <Link
+                href={secondaryCta.href}
+                className="text-white text-xs tracking-[0.2em] uppercase underline underline-offset-[6px] decoration-white/60 hover:decoration-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+              >
+                {secondaryCta.label}
+              </Link>
+            ) : null}
+          </div>
         </div>
       </div>
 

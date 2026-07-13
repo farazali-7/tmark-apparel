@@ -5,9 +5,14 @@ import { MediaPlaceholder } from "@/components/storefront/media-placeholder"
 import { cn } from "@/lib/utils"
 import type { CategoryTile } from "@/types"
 
+const HEADING_ID = "tile-row-heading"
+
 interface TileRowProps {
-  tiles: CategoryTile[]
-  ariaLabel: string
+  tiles: readonly CategoryTile[]
+  /** Screen-reader label for the region when no visible heading is shown. */
+  ariaLabel?: string
+  /** Visible <h2> above the grid. Supersedes `ariaLabel` when provided. */
+  heading?: string
   /**
    * Category rows print their label over the image; editorial rows are pure
    * imagery, so the label is exposed to assistive tech only.
@@ -15,9 +20,22 @@ interface TileRowProps {
   showLabels?: boolean
 }
 
-export function TileRow({ tiles, ariaLabel, showLabels = false }: TileRowProps) {
+export function TileRow({ tiles, ariaLabel, heading, showLabels = false }: TileRowProps) {
   return (
-    <section aria-label={ariaLabel} className={cn(SITE_CONTAINER, "pt-12")}>
+    <section
+      aria-label={heading ? undefined : ariaLabel}
+      aria-labelledby={heading ? HEADING_ID : undefined}
+      className={cn(SITE_CONTAINER, "pt-12")}
+    >
+      {heading ? (
+        <h2
+          id={HEADING_ID}
+          className="font-serif uppercase text-3xl sm:text-4xl text-center text-neutral-900 tracking-wide mb-10"
+        >
+          {heading}
+        </h2>
+      ) : null}
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {tiles.map((tile) => (
           <Link

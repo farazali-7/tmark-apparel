@@ -4,6 +4,8 @@ import { useId, useState, type FormEvent } from "react"
 import Link from "next/link"
 import { ArrowRight, Check } from "lucide-react"
 
+import { NEWSLETTER } from "@/content/homepage"
+
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-sage"
 
@@ -21,18 +23,15 @@ export function NewsletterForm() {
 
   return (
     <div>
-      <h3 className="font-serif uppercase text-xl tracking-wide mb-3">Newsletter</h3>
-      <p className="text-sm text-white/80 mb-5 max-w-sm">
-        Subscribe to receive updates about new collections, exclusive offers and style
-        inspiration from T-Mark Apparel.
-      </p>
+      <h3 className="font-serif uppercase text-xl tracking-wide mb-3">{NEWSLETTER.heading}</h3>
+      <p className="text-sm text-white/80 mb-5 max-w-sm">{NEWSLETTER.body}</p>
 
       <form
         onSubmit={handleSubmit}
         className="flex items-end gap-3 border-b border-white/40 pb-1.5 max-w-sm"
       >
         <label htmlFor={emailId} className="sr-only">
-          Email address
+          {NEWSLETTER.emailLabel}
         </label>
         <input
           id={emailId}
@@ -42,10 +41,10 @@ export function NewsletterForm() {
           autoComplete="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="Email*"
+          placeholder={NEWSLETTER.emailLabel}
           className="flex-1 bg-transparent text-sm placeholder:text-white/60 focus:outline-none"
         />
-        <button type="submit" aria-label="Subscribe" className={`hover:opacity-70 ${focusRing}`}>
+        <button type="submit" aria-label={NEWSLETTER.submitLabel} className={`hover:opacity-70 ${focusRing}`}>
           <ArrowRight aria-hidden className="w-4 h-4" />
         </button>
       </form>
@@ -76,15 +75,13 @@ export function NewsletterForm() {
           htmlFor={consentId}
           className="text-xs text-white/80 leading-relaxed cursor-pointer"
         >
-          I consent to the processing of my data to receive newsletters, as per the{" "}
-          <Link href="#" className="underline">
-            Privacy policy
+          {NEWSLETTER.consentLead}
+          <Link href={NEWSLETTER.privacyHref} className="underline">
+            {NEWSLETTER.consentLinkLabel}
           </Link>
-          *.
+          {NEWSLETTER.consentTrail}
         </label>
       </div>
-
-      <p className="text-xs text-white/60 mt-3">*Mandatory fields</p>
     </div>
   )
 }

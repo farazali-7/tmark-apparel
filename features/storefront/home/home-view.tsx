@@ -2,7 +2,7 @@ import { FeaturedProducts } from "@/features/storefront/home/components/featured
 import { HeroSlide } from "@/features/storefront/home/components/hero-slide"
 import { InfoColumns } from "@/features/storefront/home/components/info-columns"
 import { TileRow } from "@/features/storefront/home/components/tile-row"
-import { CATEGORY_TILES, HERO_SLIDES } from "@/lib/mock-data/storefront"
+import { HERO_SLIDES, SHOP_BY_GARMENT } from "@/content/homepage"
 
 export function HomeView() {
   return (
@@ -16,7 +16,7 @@ export function HomeView() {
         />
       ))}
 
-      <TileRow tiles={CATEGORY_TILES} ariaLabel="Shop by category" showLabels />
+      <TileRow tiles={SHOP_BY_GARMENT.tiles} heading={SHOP_BY_GARMENT.heading} showLabels />
       <FeaturedProducts />
       <InfoColumns />
     </>

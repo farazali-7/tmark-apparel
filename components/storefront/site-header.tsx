@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Menu, Search, X } from "lucide-react"
 
 import { SITE_CONTAINER } from "@/components/storefront/container"
-import { SITE_NAV } from "@/lib/mock-data/storefront"
+import { MAIN_NAV } from "@/config/navigation"
 import { cn } from "@/lib/utils"
 
 const MOBILE_NAV_ID = "site-mobile-nav"
@@ -34,6 +34,7 @@ export function SiteHeader() {
   const [offset, setOffset] = useState(0)
   const lastScrollY = useRef(0)
   const headerRef = useRef<HTMLElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const frame = useRef(0)
 
   useEffect(() => {
@@ -71,11 +72,15 @@ export function SiteHeader() {
     }
   }, [])
 
-  // Escape closes the mobile drawer — expected of any disclosure widget.
+  // Escape closes the mobile drawer and returns focus to its trigger — expected
+  // of any disclosure widget.
   useEffect(() => {
     if (!menuOpen) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false)
+      if (event.key === "Escape") {
+        setMenuOpen(false)
+        menuButtonRef.current?.focus()
+      }
     }
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
@@ -119,6 +124,7 @@ export function SiteHeader() {
         )}
       >
         <button
+          ref={menuButtonRef}
           type="button"
           onClick={() => setMenuOpen((open) => !open)}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -145,7 +151,7 @@ export function SiteHeader() {
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:flex items-center gap-7 lg:ml-8">
-          {SITE_NAV.map((item) => (
+          {MAIN_NAV.map((item) => (
             <Link
               key={item.label}
               href={item.href}
@@ -181,7 +187,7 @@ export function SiteHeader() {
           aria-label="Primary"
           className="lg:hidden bg-white border-t border-neutral-200 px-4 py-3 flex flex-col gap-3"
         >
-          {SITE_NAV.map((item) => (
+          {MAIN_NAV.map((item) => (
             <Link
               key={item.label}
               href={item.href}

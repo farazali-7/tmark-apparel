@@ -862,10 +862,23 @@ export interface CategoryTile extends SiteLink {
   mediaLabel?: string
 }
 
+/**
+ * Ready-to-Wear vs Made-to-Measure is a product ATTRIBUTE, never a URL folder —
+ * the same garment can be sold both ways, so it is modelled on the product and
+ * surfaced as the card's availability tag, not as a separate category tree.
+ */
+export type ProductService = "Ready-to-Wear" | "Made-to-Measure"
+
 export interface FeaturedProduct {
   id: string
+  /** Naming formula: [Colour] + [Fabric] + [Garment] + [Distinguishing detail]. */
   name: string
   href: string
+  /** Rendered verbatim — may be a `PKR [CONFIRM]` placeholder pending pricing. */
+  price: string
+  service: ProductService
+  /** Full-length alt text describing the garment (portrait 3:4 imagery). */
+  imageAlt: string
 }
 
 export interface HeroSlideContent {
@@ -873,6 +886,10 @@ export interface HeroSlideContent {
   headingLines: string[]
   eyebrow: string
   cta: SiteLink
+  /** Optional second call to action — splits bespoke buyers from browsers. */
+  secondaryCta?: SiteLink
+  /** Background image under /public. When absent, a placeholder is shown. */
+  imageSrc?: string
   mediaLabel: string
   /** Renders the play/pause control. Only meaningful for video media. */
   hasVideo?: boolean
