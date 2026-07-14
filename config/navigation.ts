@@ -13,15 +13,64 @@ export interface NavItem {
   href: string
   /** Sub-navigation, max two levels deep (this node + children + grandchildren). */
   children?: NavItem[]
+  /**
+   * When present, this top-level item opens a mega menu organised by occasion.
+   * The buyer shops by event (Barat/Nikkah/Walima/Mehndi), not by garment.
+   */
+  mega?: MegaColumn[]
+}
+
+/** One occasion column in the Wedding mega menu. */
+export interface MegaColumn {
+  /** Occasion heading, itself a link to the occasion edit. */
+  occasion: NavItem
+  /** Garments cut for that occasion. */
+  links: NavItem[]
 }
 
 /**
- * Primary navbar. Rendered flat today (top level only) to preserve the approved
- * header layout; children are modelled here so a mega menu or category landing
- * page can consume them later without touching component code.
+ * Wedding is organised by occasion, mirroring the hero's own headline. Order and
+ * pairings come straight from the merchandising brief.
+ */
+const WEDDING_MEGA: MegaColumn[] = [
+  {
+    occasion: { label: "Barat", href: "/wedding/barat" },
+    links: [
+      { label: "Sherwani", href: "/wedding/sherwani" },
+      { label: "Prince Coat", href: "/wedding/prince-coat" },
+    ],
+  },
+  {
+    occasion: { label: "Nikkah", href: "/wedding/nikkah" },
+    links: [
+      { label: "Prince Coat", href: "/wedding/prince-coat" },
+      { label: "Waistcoat", href: "/wedding/waistcoat" },
+    ],
+  },
+  {
+    occasion: { label: "Walima", href: "/wedding/walima" },
+    links: [
+      { label: "Suiting", href: "/wedding/suiting" },
+      { label: "Tuxedo", href: "/wedding/tuxedo" },
+    ],
+  },
+  {
+    occasion: { label: "Mehndi", href: "/wedding/mehndi" },
+    links: [
+      { label: "Kurta", href: "/wedding/kurta" },
+      { label: "Shawl", href: "/wedding/shawl" },
+    ],
+  },
+]
+
+/**
+ * Primary navbar. Order is deliberate — Wedding and Made to Measure (the
+ * highest-margin intents) lead. Wedding opens the occasion mega menu; the rest
+ * are direct links. Children on Men are modelled for a future landing page.
  */
 export const MAIN_NAV: NavItem[] = [
-  { label: "New In", href: "/shop/new-in" },
+  { label: "Wedding", href: "/wedding", mega: WEDDING_MEGA },
+  { label: "Made to Measure", href: "/made-to-measure" },
   {
     label: "Men",
     href: "/shop/men",
@@ -37,15 +86,18 @@ export const MAIN_NAV: NavItem[] = [
       { label: "Western Suiting", href: "/shop/men/western-suiting" },
     ],
   },
+  { label: "New In", href: "/shop/new-in" },
   // TODO(client): confirm the Kids garment tree (full tree, or Sherwani + Waistcoat only).
   { label: "Kids", href: "/shop/kids" },
-  { label: "Wedding", href: "/shop/occasion/barat" },
-  { label: "Made to Measure", href: "/made-to-measure" },
   { label: "Our Brand", href: "/brand" },
 ]
 
-/** Top-bar utility links. */
+/** Top-bar and utility links. */
 export const UTILITY_NAV = {
+  atelier: { label: "Lahore Atelier", href: "/atelier" },
+  madeToMeasure: { label: "Learn more", href: "/made-to-measure" },
+  // TODO(client): replace with the real wa.me number, e.g. https://wa.me/92XXXXXXXXXX
+  whatsapp: { label: "WhatsApp", href: "https://wa.me/92XXXXXXXXXX" },
   findStore: { label: "Find a Store", href: "/stores" },
   signIn: { label: "Sign In", href: "/account" },
   createAccount: { label: "Create Account", href: "/account?tab=signup" },

@@ -860,6 +860,8 @@ export interface SocialLink {
 export interface CategoryTile extends SiteLink {
   /** Alt text for the tile's media. Falls back to `label` when omitted. */
   mediaLabel?: string
+  /** Image under /public. When absent, a placeholder renders (no 404). */
+  imageSrc?: string
 }
 
 /**

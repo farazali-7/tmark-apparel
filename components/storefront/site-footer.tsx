@@ -78,7 +78,7 @@ export function SiteFooter() {
                       <span className="sr-only">{method.label}</span>
                     </>
                   ) : (
-                    <span className="text-brand-sage text-[9px] font-semibold tracking-wide leading-none whitespace-nowrap">
+                    <span className="text-brand-sage text-[0.5625rem] font-semibold tracking-wide leading-none whitespace-nowrap">
                       {method.label}
                     </span>
                   )}

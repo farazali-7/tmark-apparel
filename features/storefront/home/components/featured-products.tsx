@@ -49,7 +49,7 @@ export function FeaturedProducts() {
               <p className="mt-1 text-sm text-neutral-600 tabular pr-3">{product.price}</p>
               <span
                 className={cn(
-                  "mt-2 inline-block text-[11px] tracking-[0.15em] uppercase",
+                  "mt-2 inline-block text-[0.6875rem] tracking-[0.15em] uppercase",
                   product.service === "Made-to-Measure"
                     ? "text-gold"
                     : "text-neutral-500"

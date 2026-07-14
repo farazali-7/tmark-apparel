@@ -56,6 +56,48 @@
 }
 
 :root {
+  /* ---------------------------------------------------------------------- *
+   * Storefront design tokens — the whole system. Components reference these
+   * via var(); no raw px for the shared scale and no hex for colour should
+   * appear in component files. If a component needs a value that isn't here,
+   * the token set is wrong — fix the token, not the component.
+   * ---------------------------------------------------------------------- */
+
+  /* Type scale — 1.25 ratio, fluid */
+  --step--1: clamp(0.83rem, 0.80rem + 0.15vw, 0.90rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.15rem + 0.4vw, 1.4rem);
+  --step-3: clamp(1.95rem, 1.6rem + 1.8vw, 2.75rem);
+  --step-5: clamp(3rem, 2.2rem + 4vw, 4.5rem);
+
+  /* Spacing — 8pt base */
+  --s-1: 8px;
+  --s-2: 16px;
+  --s-3: 24px;
+  --s-4: 32px;
+  --s-5: 48px;
+  --s-6: 64px;
+  --s-8: 96px;
+  --s-10: 128px;
+
+  /* Colour — 4 tokens. `--zari` is the gold accent (used once per viewport);
+     it is kept separate from the pre-existing OKLCH `--gold` token so that
+     Tailwind's `text-gold` utility is not silently re-coloured. */
+  --ink: #1b1d1a;
+  --paper: #f6f3ee;
+  --line: rgba(27, 29, 26, 0.14);
+  --zari: #8a6e3c;
+}
+
+/* Below 480px, let the hero headline drop to a 2.5rem floor so three words
+   still wrap to at most two lines. */
+@media (max-width: 479px) {
+  :root {
+    --step-5: clamp(2.5rem, 1.8rem + 6vw, 3rem);
+  }
+}
+
+:root {
   /* Warm off-white surfaces, charcoal ink — luxury menswear neutrals */
   --background: oklch(0.992 0.002 75);
   --foreground: oklch(0.17 0.006 65);
@@ -151,15 +193,21 @@
     @apply font-sans;
   }
 
-  /* Honour reduced-motion globally: neutralise animations, transitions and
-     smooth scrolling for users who ask for it. */
+  /* Baseline visible focus for keyboard users — component-level rings layer on
+     top of this, but nothing can ever be focused without a ring. */
+  :focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  /* Honour reduced-motion globally: kill animation, transition and smooth
+     scrolling for users who ask for it. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      animation: none !important;
+      transition: none !important;
       scroll-behavior: auto !important;
     }
   }

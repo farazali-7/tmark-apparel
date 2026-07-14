@@ -9,17 +9,22 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
+// `display: "swap"` + next/font's automatic size-adjusted fallback keep the
+// serif headline from shifting on first paint.
 const bodoni = Bodoni_Moda({
   variable: "--font-bodoni",
   subsets: ["latin"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -38,7 +43,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${bodoni.variable} h-full antialiased`}
     >
-      <body className="min-h-full">
+      <body className="min-h-full" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

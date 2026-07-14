@@ -1,71 +1,63 @@
+import Image from "next/image"
 import Link from "next/link"
 
-import { SITE_CONTAINER } from "@/components/storefront/container"
 import { MediaPlaceholder } from "@/components/storefront/media-placeholder"
-import { cn } from "@/lib/utils"
 import type { CategoryTile } from "@/types"
-
-const HEADING_ID = "tile-row-heading"
 
 interface TileRowProps {
   tiles: readonly CategoryTile[]
-  /** Screen-reader label for the region when no visible heading is shown. */
-  ariaLabel?: string
-  /** Visible <h2> above the grid. Supersedes `ariaLabel` when provided. */
-  heading?: string
-  /**
-   * Category rows print their label over the image; editorial rows are pure
-   * imagery, so the label is exposed to assistive tech only.
-   */
-  showLabels?: boolean
+  /** Accessible name for the region (no visible heading in this band). */
+  ariaLabel: string
 }
 
-export function TileRow({ tiles, ariaLabel, heading, showLabels = false }: TileRowProps) {
+// The 1.03 hover scale is the only transform allowed on the site; aspect-[4/5]
+// locks the box so there is zero layout shift while the image loads.
+const media =
+  "object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+
+export function TileRow({ tiles, ariaLabel }: TileRowProps) {
   return (
     <section
-      aria-label={heading ? undefined : ariaLabel}
-      aria-labelledby={heading ? HEADING_ID : undefined}
-      className={cn(SITE_CONTAINER, "pt-12")}
+      aria-label={ariaLabel}
+      className="grid grid-cols-1 gap-[var(--s-3)] px-[var(--s-4)] md:grid-cols-3"
     >
-      {heading ? (
-        <h2
-          id={HEADING_ID}
-          className="font-serif uppercase text-3xl sm:text-4xl text-center text-neutral-900 tracking-wide mb-10"
+      {tiles.map((tile) => (
+        <Link
+          key={tile.label}
+          href={tile.href}
+          className="group relative block aspect-[4/5] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ink)]"
         >
-          {heading}
-        </h2>
-      ) : null}
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {tiles.map((tile) => (
-          <Link
-            key={tile.label}
-            href={tile.href}
-            className="group relative block aspect-[4/5] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-neutral-800"
-          >
+          {tile.imageSrc ? (
+            <Image
+              src={tile.imageSrc}
+              alt={tile.mediaLabel ?? tile.label}
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className={media}
+            />
+          ) : (
             <MediaPlaceholder
               label={tile.mediaLabel ?? tile.label}
-              className="absolute inset-0 w-full h-full transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
+              className={`absolute inset-0 h-full w-full ${media}`}
             />
-            {showLabels ? (
-              <>
-                {/* Grounds the label so it stays legible over lighter imagery. */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent"
-                />
-                <span className="absolute inset-x-0 bottom-0 flex justify-center pb-6">
-                  <span className="font-serif text-white text-2xl tracking-[0.1em] uppercase drop-shadow transition-transform duration-300 group-hover:-translate-y-1">
-                    {tile.label}
-                  </span>
-                </span>
-              </>
-            ) : (
-              <span className="sr-only">{tile.label}</span>
-            )}
-          </Link>
-        ))}
-      </div>
+          )}
+
+          {/* Soft ink wash fades in on hover — adds depth without moving the box. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[var(--ink)]/0 transition-colors duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[var(--ink)]/15"
+          />
+
+          {/* Grounds the label so it stays legible over lighter imagery. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent transition-[height] duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:h-1/2"
+          />
+          <span className="absolute bottom-[var(--s-4)] left-[var(--s-4)] text-[0.8125rem] uppercase tracking-[0.16em] text-[var(--paper)] transition-[letter-spacing] duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:tracking-[0.26em]">
+            {tile.label}
+          </span>
+        </Link>
+      ))}
     </section>
   )
 }

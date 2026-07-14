@@ -1,88 +1,52 @@
-"use client"
-
-import { useState } from "react"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { MessageCircle } from "lucide-react"
 
-import { SITE_CONTAINER } from "@/components/storefront/container"
+import { SITE_SHELL } from "@/components/storefront/container"
 import { UTILITY_NAV } from "@/config/navigation"
-import { ANNOUNCEMENTS } from "@/content/homepage"
+import { TOP_BAR } from "@/content/homepage"
 import { cn } from "@/lib/utils"
 
-const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-1 focus-visible:ring-offset-brand-sage"
+const linkFocus =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--paper)]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink)]"
 
 export function SiteTopBar() {
-  const [index, setIndex] = useState(0)
-  const segments = ANNOUNCEMENTS[index]
-
-  const cycle = (direction: 1 | -1) =>
-    setIndex((prev) => (prev + direction + ANNOUNCEMENTS.length) % ANNOUNCEMENTS.length)
-
   return (
-    <div className="bg-brand-sage text-white text-xs">
+    <div className="bg-[var(--ink)] text-[var(--paper)] text-[0.8125rem] tracking-[0.08em] uppercase">
       <div
-        className={cn(SITE_CONTAINER, "h-9 flex items-center justify-between gap-4")}
+        className={cn(
+          SITE_SHELL,
+          "flex h-11 items-center justify-between gap-4 px-4 sm:px-8"
+        )}
       >
         <Link
-          href={UTILITY_NAV.findStore.href}
-          className={cn("hidden sm:inline hover:underline whitespace-nowrap", focusRing)}
+          href={UTILITY_NAV.atelier.href}
+          className={cn("hidden whitespace-nowrap hover:underline sm:inline", linkFocus)}
         >
-          {UTILITY_NAV.findStore.label}
+          {UTILITY_NAV.atelier.label}
         </Link>
 
-        <div
-          role="region"
-          aria-label="Announcements"
-          className="flex items-center gap-3 mx-auto"
-        >
-          <button
-            type="button"
-            onClick={() => cycle(-1)}
-            aria-label="Previous announcement"
-            className={cn("hover:opacity-70", focusRing)}
-          >
-            <ChevronLeft aria-hidden className="w-3.5 h-3.5" />
-          </button>
-
-          <p aria-live="polite" className="whitespace-nowrap">
-            {segments.map((segment) =>
-              segment.href ? (
-                <Link
-                  key={segment.text}
-                  href={segment.href}
-                  className={cn("underline font-medium", focusRing)}
-                >
-                  {segment.text}
-                </Link>
-              ) : (
-                <span key={segment.text}>{segment.text}</span>
-              )
-            )}
-          </p>
-
-          <button
-            type="button"
-            onClick={() => cycle(1)}
-            aria-label="Next announcement"
-            className={cn("hover:opacity-70", focusRing)}
-          >
-            <ChevronRight aria-hidden className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        <div className="hidden items-center gap-3 whitespace-nowrap sm:flex">
-          <Link href={UTILITY_NAV.signIn.href} className={cn("hover:underline", focusRing)}>
-            {UTILITY_NAV.signIn.label}
-          </Link>
-          <span aria-hidden className="h-3 w-px bg-white/40" />
+        <p className="mx-auto text-center normal-case tracking-[0.06em] sm:uppercase sm:tracking-[0.08em]">
+          {TOP_BAR.leadTime}{" "}
           <Link
-            href={UTILITY_NAV.createAccount.href}
-            className={cn("hover:underline", focusRing)}
+            href={UTILITY_NAV.madeToMeasure.href}
+            className={cn("underline underline-offset-4", linkFocus)}
           >
-            {UTILITY_NAV.createAccount.label}
+            {UTILITY_NAV.madeToMeasure.label}
           </Link>
-        </div>
+        </p>
+
+        {/* A human, not an account form — nobody signs up before they've spoken
+            to you at this price. */}
+        <Link
+          href={UTILITY_NAV.whatsapp.href}
+          className={cn(
+            "hidden items-center gap-2 whitespace-nowrap hover:underline sm:flex",
+            linkFocus
+          )}
+        >
+          <MessageCircle aria-hidden className="h-4 w-4" />
+          {UTILITY_NAV.whatsapp.label}
+        </Link>
       </div>
     </div>
   )

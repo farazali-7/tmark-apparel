@@ -5,17 +5,18 @@ import Link from "next/link"
 import { Menu, Search, X } from "lucide-react"
 
 import { SITE_CONTAINER } from "@/components/storefront/container"
+import { MegaMenuItem } from "@/components/storefront/mega-menu"
 import { MAIN_NAV } from "@/config/navigation"
 import { cn } from "@/lib/utils"
 
 const MOBILE_NAV_ID = "site-mobile-nav"
 
 /**
- * The chrome hands off exactly when the sage top bar (h-9 = 36px) finishes
- * scrolling away: at that scroll offset the absolute header's top edge reaches
- * the viewport top, so swapping to `fixed top-0` is seamless.
+ * The chrome hands off exactly when the top bar (h-11 = 44px) finishes scrolling
+ * away: at that scroll offset the absolute header's top edge reaches the viewport
+ * top, so swapping to `fixed top-0` is seamless. Keep in sync with the bar height.
  */
-const SOLID_SCROLL_THRESHOLD = 36
+const SOLID_SCROLL_THRESHOLD = 44
 /**
  * The header only starts retracting once we're a comfortable distance into the
  * page — pulling it up the moment it turns solid feels abrupt so close to the top.
@@ -114,7 +115,7 @@ export function SiteHeader() {
         "transition-[background-color,border-color] duration-300",
         solid
           ? "fixed top-0 bg-white border-b border-neutral-200"
-          : "absolute top-9 bg-transparent"
+          : "absolute top-11 bg-transparent"
       )}
     >
       <div
@@ -151,21 +152,21 @@ export function SiteHeader() {
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:flex items-center gap-7 lg:ml-8">
-          {MAIN_NAV.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={cn(
-                "text-sm transition-colors",
-                solid
-                  ? "text-neutral-700 hover:text-neutral-950"
-                  : "text-white hover:opacity-80",
-                focusRing
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {MAIN_NAV.map((item) => {
+            const triggerClassName = cn(
+              "text-sm transition-colors",
+              solid ? "text-neutral-700 hover:text-neutral-950" : "text-white hover:opacity-80",
+              focusRing
+            )
+
+            return item.mega ? (
+              <MegaMenuItem key={item.label} item={item} triggerClassName={triggerClassName} />
+            ) : (
+              <Link key={item.label} href={item.href} className={triggerClassName}>
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
 
         <button
@@ -188,14 +189,30 @@ export function SiteHeader() {
           className="lg:hidden bg-white border-t border-neutral-200 px-4 py-3 flex flex-col gap-3"
         >
           {MAIN_NAV.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={() => setMenuOpen(false)}
-              className={cn("text-sm text-neutral-700", focusRing)}
-            >
-              {item.label}
-            </Link>
+            <div key={item.label} className="flex flex-col gap-2">
+              <Link
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className={cn("text-sm text-neutral-900", focusRing)}
+              >
+                {item.label}
+              </Link>
+              {item.mega ? (
+                <ul className="ml-3 flex flex-col gap-2 border-l border-neutral-200 pl-3">
+                  {item.mega.map((column) => (
+                    <li key={column.occasion.label}>
+                      <Link
+                        href={column.occasion.href}
+                        onClick={() => setMenuOpen(false)}
+                        className={cn("text-sm text-neutral-600", focusRing)}
+                      >
+                        {column.occasion.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
           ))}
         </nav>
       )}
