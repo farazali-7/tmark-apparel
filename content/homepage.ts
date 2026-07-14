@@ -12,7 +12,6 @@ import {
 } from "react-icons/si"
 
 import type {
-  Announcement,
   CategoryTile,
   FeaturedProduct,
   HeroSlideContent,
@@ -39,71 +38,62 @@ export const HOMEPAGE_SEO = {
 
 /* --------------------------- Announcement bar ------------------------------ */
 
-export const ANNOUNCEMENTS: Announcement[] = [
-  [{ text: "Worldwide shipping — Pakistan, UK, USA, Gulf & Canada", href: "/help/shipping" }],
-  [{ text: "Made-to-Measure fittings now booking in Lahore", href: "/made-to-measure/book" }],
-  [{ text: "Wedding season 2026 — order 6 weeks before your event", href: "/shop/occasion/barat" }],
-]
+/**
+ * Static top bar. Answers the one question a buyer at this price has — lead
+ * time — and offers a human (WhatsApp) rather than an account form.
+ */
+export const TOP_BAR = {
+  leadTime: "Made-to-Measure · 4–6 weeks · Rush service for wedding dates",
+} as const
 
 /* --------------------------------- Hero ------------------------------------ */
 
+/**
+ * One hero, one CTA, one intent. The three ceremonies ARE the headline; the old
+ * sentence is demoted to the eyebrow (same copy, correct hierarchy). The second
+ * CTA ("Explore Sherwani") now lives as a tile in the category band below.
+ */
 export const HERO_SLIDES: HeroSlideContent[] = [
   {
     id: "wedding-couture",
-    eyebrow: "COUTURE MENSWEAR — LAHORE",
-    headingLines: ["Barat. Nikkah. Walima.", "Cut for the day you'll remember."],
-    cta: { label: "BOOK A FITTING", href: "/made-to-measure/book" },
-    secondaryCta: { label: "EXPLORE SHERWANI", href: "/shop/men/sherwani" },
+    eyebrow: "Cut for the day you'll remember — Lahore",
+    headingLines: ["Barat. Nikkah. Walima."],
+    cta: { label: "Book a Fitting", href: "/made-to-measure/book" },
     imageSrc: "/DSC01322.jpg.jpeg",
+    // TODO(client): alt describes the intended reshoot; update to match the real photo.
     mediaLabel:
       "Groom in an ivory and gold sherwani in a Lahore courtyard, full length in natural light",
   },
-  {
-    id: "wedding-edit",
-    eyebrow: "THE WEDDING EDIT 2026",
-    headingLines: ["Six ceremonies.", "Six ways to be dressed."],
-    cta: { label: "SHOP BY OCCASION", href: "/shop/occasion" },
-    mediaLabel: "Editorial grouping of ceremonial menswear for the six wedding events",
-  },
 ]
 
-/* --------------------------- Shop by garment ------------------------------- */
+/* --------------------------- Category band --------------------------------- */
 
-export const SHOP_BY_GARMENT = {
-  heading: "Shop by garment",
-  tiles: [
-    {
-      label: "Sherwani",
-      href: "/shop/men/sherwani",
-      mediaLabel: "Full-length ivory sherwani with an embroidered placket",
-    },
-    {
-      label: "Prince Coat",
-      href: "/shop/men/prince-coat",
-      mediaLabel: "Full-length prince coat in deep navy, three-quarter view",
-    },
-    {
-      label: "Waistcoat",
-      href: "/shop/men/waistcoat",
-      mediaLabel: "Torso crop of a ceremonial waistcoat with gold-work",
-    },
-    {
-      label: "Shalwar Kameez",
-      href: "/shop/men/shalwar-kameez",
-      mediaLabel: "Full-length monochrome shalwar kameez, relaxed cut",
-    },
-    {
-      label: "Western Suiting",
-      href: "/shop/men/western-suiting",
-      mediaLabel: "Full-length charcoal three-piece suit",
-    },
-    {
-      label: "Made-to-Measure",
-      href: "/made-to-measure",
-      mediaLabel: "Atelier detail — tailor's chalk marking cloth beside a tape measure",
-    },
-  ] satisfies CategoryTile[],
-} as const
+/**
+ * Three tiles directly under the hero — the two lead garments plus Made-to-
+ * Measure, which earns above-the-fold-adjacent space proportional to its margin.
+ * `imageSrc` is intentionally omitted until the AVIFs exist (a missing src would
+ * 404 through next/image); the placeholder renders in the meantime.
+ */
+export const CATEGORY_BAND: CategoryTile[] = [
+  {
+    label: "Sherwani",
+    href: "/wedding/sherwani",
+    imageSrc: "/sherwani-main-home.JPG",
+    mediaLabel: "Full-length ivory sherwani with an embroidered placket",
+  },
+  {
+    label: "Prince Coat",
+    href: "/wedding/prince-coat",
+    imageSrc: "/LuxuriousBlackPrinceCoatforMen_1445x.webp",
+    mediaLabel: "Full-length prince coat in deep navy, three-quarter view",
+  },
+  {
+    label: "Made to Measure",
+    href: "/made-to-measure",
+    imageSrc: "/MADE_TO_MEASURE_4x5.jpeg",
+    mediaLabel: "Atelier detail — tailor's chalk marking cloth beside a tape measure",
+  },
+]
 
 /* ------------------------------- New In ------------------------------------ */
 
