@@ -87,6 +87,19 @@
   --paper: #f6f3ee;
   --line: rgba(27, 29, 26, 0.14);
   --zari: #8a6e3c;
+
+  /* Motion — ONE timing system so every interaction feels part of the same
+     hand. Every value sits in the 180–350ms luxury band; the easing starts
+     with confidence and settles, never snapping or bouncing (a car door
+     closing, not a button popping). Reduced-motion collapses all of it to
+     instant in the @layer base rule below. */
+  --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-text: 180ms;      /* nav colour, icon fade, CTA hover      */
+  --dur-underline: 220ms; /* the centred underline growth          */
+  --dur-dropdown: 280ms;  /* small disclosures                     */
+  --dur-search: 250ms;    /* the inline search expansion           */
+  --dur-nav: 300ms;       /* transparent → frosted, height, shadow */
+  --dur-mega: 350ms;      /* the mega-menu panel + staggered reveal */
 }
 
 /* Below 480px, let the hero headline drop to a 2.5rem floor so three words

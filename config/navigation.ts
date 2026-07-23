@@ -72,8 +72,12 @@ export const MAIN_NAV: NavItem[] = [
   { label: "Wedding", href: "/wedding", mega: WEDDING_MEGA },
   { label: "Made to Measure", href: "/made-to-measure" },
   {
-    label: "Men",
-    href: "/shop/men",
+    // Ready-to-Wear is the entry to the SINGLE catalogue (RTW is a product
+    // attribute — see the file header). It replaces the old "Men" label so the
+    // nav reads by intent, not gender; Kids lives inside the same tree as a
+    // child rather than a parallel top-level shout.
+    label: "Ready to Wear",
+    href: "/shop",
     children: [
       { label: "Sherwani", href: "/shop/men/sherwani" },
       { label: "Prince Coat", href: "/shop/men/prince-coat" },
@@ -84,11 +88,11 @@ export const MAIN_NAV: NavItem[] = [
       // TODO(client): confirm Western Suiting sub-types (Two Piece / Three Piece /
       // Double Breasted / Tuxedo) before nesting them here.
       { label: "Western Suiting", href: "/shop/men/western-suiting" },
+      // TODO(client): confirm the Kids garment tree (full tree, or Sherwani + Waistcoat only).
+      { label: "Kids", href: "/shop/kids" },
     ],
   },
   { label: "New In", href: "/shop/new-in" },
-  // TODO(client): confirm the Kids garment tree (full tree, or Sherwani + Waistcoat only).
-  { label: "Kids", href: "/shop/kids" },
   { label: "Our Brand", href: "/brand" },
 ]
 
@@ -101,6 +105,12 @@ export const UTILITY_NAV = {
   findStore: { label: "Find a Store", href: "/stores" },
   signIn: { label: "Sign In", href: "/account" },
   createAccount: { label: "Create Account", href: "/account?tab=signup" },
+  // Header utilities. The single primary CTA — consultation before commerce.
+  account: { label: "Account", href: "/account" },
+  bookAppointment: { label: "Book Appointment", href: "/made-to-measure/book" },
+  // TODO(client): the search results page (/search) is not built yet — the
+  // overlay routes here on submit so the control is real, not decorative.
+  search: { label: "Search", href: "/search" },
 } satisfies Record<string, NavItem>
 
 /** Footer link columns (Legal lives in the bottom bar — see LEGAL_NAV). */
