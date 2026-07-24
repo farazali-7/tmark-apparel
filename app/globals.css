@@ -87,6 +87,10 @@
   --paper: #f6f3ee;
   --line: rgba(27, 29, 26, 0.14);
   --zari: #8a6e3c;
+  /* The signature hairline: brass at low opacity instead of a grey rule. Used
+     for navigation dividers and the mega panel's edges — you never consciously
+     see it, but it warms every division in the system. */
+  --rule: rgba(138, 110, 60, 0.22);
 
   /* Motion — ONE timing system so every interaction feels part of the same
      hand. Every value sits in the 180–350ms luxury band; the easing starts

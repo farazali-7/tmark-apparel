@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, User, X } from "lucide-react"
+import { ChevronDown, User } from "lucide-react"
 
 import { SITE_CONTAINER } from "@/components/storefront/container"
 import { MegaMenuItem } from "@/components/storefront/mega-menu"
 import { SiteSearch } from "@/components/storefront/site-search"
-import { MAIN_NAV, UTILITY_NAV } from "@/config/navigation"
+import { MAIN_NAV, UTILITY_NAV, type NavItem } from "@/config/navigation"
 import { cn } from "@/lib/utils"
 
 const MOBILE_NAV_ID = "site-mobile-nav"
@@ -34,6 +34,8 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  // Which mobile-drawer item is expanded (one open at a time — an accordion).
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   // How far the header is currently pulled up, in px (0 = fully open, height = hidden).
   const [offset, setOffset] = useState(0)
   const lastScrollY = useRef(0)
@@ -91,14 +93,37 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [menuOpen])
 
-  // The full-screen mobile menu locks body scroll so the page beneath can't
-  // drift while it's open; the previous value is restored on close.
+  /**
+   * Full-screen menu scroll lock. `overflow: hidden` alone is not enough on iOS
+   * — Safari keeps rubber-banding and forgets the offset — so the body is pinned
+   * with `position: fixed` at a negative top and the exact scroll position is
+   * restored on close. `lastScrollY` is resynced first so the reveal logic
+   * doesn't read the restore as a giant scroll jump and hide the header.
+   * Any expanded accordion section is left as-is for the next open, which keeps
+   * this effect free of cascading setState.
+   */
   useEffect(() => {
     if (!menuOpen) return
-    const previous = document.body.style.overflow
-    document.body.style.overflow = "hidden"
+    const body = document.body
+    const scrollY = window.scrollY
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    }
+    body.style.position = "fixed"
+    body.style.top = `-${scrollY}px`
+    body.style.width = "100%"
+    body.style.overflow = "hidden"
+
     return () => {
-      document.body.style.overflow = previous
+      body.style.position = previous.position
+      body.style.top = previous.top
+      body.style.width = previous.width
+      body.style.overflow = previous.overflow
+      lastScrollY.current = scrollY
+      window.scrollTo(0, scrollY)
     }
   }, [menuOpen])
 
@@ -118,8 +143,9 @@ export function SiteHeader() {
       : "focus-visible:ring-white focus-visible:ring-offset-transparent"
   )
   const iconColor = solid ? "text-neutral-800" : "text-white"
+  // 44px minimum touch target on every icon control, per Apple HIG.
   const iconClasses = cn(
-    "inline-flex items-center justify-center p-1 transition-[color,opacity] duration-[var(--dur-text)] hover:opacity-70",
+    "inline-flex min-h-11 min-w-11 items-center justify-center transition-[color,opacity] duration-[var(--dur-text)] hover:opacity-70",
     iconColor,
     focusRing
   )
@@ -139,7 +165,7 @@ export function SiteHeader() {
         "transition-[background-color,border-color,box-shadow] duration-[var(--dur-nav)] ease-[var(--ease-luxe)]",
         solid
           ? // Frosted ivory, not flat white — reads as expensive over photography.
-            "fixed top-0 border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur-md shadow-[0_1px_24px_-14px_rgba(27,29,26,0.4)]"
+            "fixed top-0 border-b border-[var(--rule)] bg-[var(--paper)]/85 backdrop-blur-md shadow-[0_1px_24px_-14px_rgba(27,29,26,0.4)]"
           : "absolute top-11 bg-transparent"
       )}
     >
@@ -164,24 +190,29 @@ export function SiteHeader() {
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           aria-controls={MOBILE_NAV_ID}
-          className={cn("lg:hidden", iconColor, focusRing)}
+          className={cn(
+            "-ml-2 inline-flex min-h-11 min-w-11 items-center justify-center lg:hidden",
+            iconColor,
+            focusRing
+          )}
         >
-          {/* Hamburger ↔ X morph — a quiet quarter-turn crossfade, never a spin. */}
-          <span className="relative block h-6 w-6">
-            <Menu
-              aria-hidden
-              className={cn(
-                "absolute inset-0 h-6 w-6 transition-[opacity,transform] duration-[var(--dur-text)] ease-[var(--ease-luxe)]",
-                menuOpen ? "rotate-90 scale-90 opacity-0" : "rotate-0 opacity-100"
-              )}
-            />
-            <X
-              aria-hidden
-              className={cn(
-                "absolute inset-0 h-6 w-6 transition-[opacity,transform] duration-[var(--dur-text)] ease-[var(--ease-luxe)]",
-                menuOpen ? "rotate-0 opacity-100" : "-rotate-90 scale-90 opacity-0"
-              )}
-            />
+          {/* True three-line morph: the outer bars rotate into an X while the
+              middle one fades out. Bars are drawn, not icon-swapped, so the
+              transition is continuous rather than a crossfade. */}
+          <span aria-hidden className="relative block h-4 w-6">
+            {[
+              { base: "top-0", open: "top-1/2 -translate-y-1/2 rotate-45" },
+              { base: "top-1/2 -translate-y-1/2", open: "opacity-0" },
+              { base: "bottom-0", open: "bottom-1/2 translate-y-1/2 -rotate-45" },
+            ].map((bar, index) => (
+              <span
+                key={index}
+                className={cn(
+                  "absolute left-0 block h-px w-full bg-current transition-[transform,opacity,top,bottom] duration-300 ease-[var(--ease-luxe)]",
+                  menuOpen ? bar.open : bar.base
+                )}
+              />
+            ))}
           </span>
         </button>
 
@@ -190,7 +221,8 @@ export function SiteHeader() {
           className={cn(
             // The logo exists, it never performs: a hair of opacity on hover, and
             // a barely-there scale-down as the bar shrinks. No bounce, no spin.
-            "origin-left font-serif text-2xl tracking-[0.15em] transition-[transform,color,opacity] duration-[var(--dur-nav)] ease-[var(--ease-luxe)] hover:opacity-80 sm:text-3xl",
+            // Laptop trims the logo ~5% to buy nav room; XL restores it.
+            "origin-left font-serif text-2xl tracking-[0.15em] transition-[transform,color,opacity] duration-[var(--dur-nav)] ease-[var(--ease-luxe)] hover:opacity-80 sm:text-3xl lg:text-[1.7rem] xl:text-3xl",
             solid ? "scale-[0.97] text-neutral-900" : "scale-100 text-white",
             focusRing
           )}
@@ -198,7 +230,11 @@ export function SiteHeader() {
           T-Mark Apparel
         </Link>
 
-        <nav aria-label="Primary" className="hidden lg:flex items-center gap-7 lg:ml-8">
+        {/* Laptop tightens the gaps rather than dropping links; XL breathes. */}
+        <nav
+          aria-label="Primary"
+          className="hidden items-center lg:ml-6 lg:flex lg:gap-5 xl:ml-8 xl:gap-7"
+        >
           {MAIN_NAV.map((item) => {
             const active = isActive(item.href)
             const triggerClassName = cn(
@@ -207,10 +243,18 @@ export function SiteHeader() {
               // A hairline underline grows from the CENTRE outward (background
               // position 50%) — more elegant than a left-to-right wipe, and it
               // needs no extra DOM so it works on plain and mega triggers alike.
-              "bg-[linear-gradient(currentColor,currentColor)] bg-no-repeat [background-position:50%_100%]",
+              "bg-no-repeat [background-position:50%_100%]",
               "transition-[background-size,color] duration-[var(--dur-underline)] ease-[var(--ease-luxe)]",
+              // THE signature detail: the current section is marked in antique
+              // brass, never in the text colour. It is the one flash of metal in
+              // the whole chrome — reserved for "you are here" and nothing else.
+              // Over the hero it falls back to white, where brass would go muddy
+              // against photography.
+              active && solid
+                ? "bg-[linear-gradient(var(--zari),var(--zari))]"
+                : "bg-[linear-gradient(currentColor,currentColor)]",
               active
-                ? "[background-size:100%_1px]"
+                ? "[background-size:100%_2px]"
                 : "[background-size:0%_1px] hover:[background-size:100%_1px]",
               // Text brightens on hover in both header states.
               solid
@@ -223,8 +267,13 @@ export function SiteHeader() {
               focusRing
             )
 
-            return item.mega ? (
-              <MegaMenuItem key={item.label} item={item} triggerClassName={triggerClassName} />
+            return item.megaMenu ? (
+              <MegaMenuItem
+                key={item.label}
+                item={item}
+                menu={item.megaMenu}
+                triggerClassName={triggerClassName}
+              />
             ) : (
               <Link key={item.label} href={item.href} className={triggerClassName}>
                 {item.label}
@@ -260,7 +309,8 @@ export function SiteHeader() {
             className={cn(
               // CTA hover is almost invisible: tone deepens, a soft shadow drifts
               // in, the border fades into the fill. No scale, no glow, no bounce.
-              "hidden whitespace-nowrap border px-5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] lg:inline-flex lg:items-center",
+              // Appears from tablet up — secondary actions stay in the drawer.
+              "hidden min-h-11 whitespace-nowrap border px-4 py-2.5 text-xs font-medium uppercase tracking-[0.14em] md:inline-flex md:items-center lg:px-5",
               "transition-[background-color,color,border-color,box-shadow] duration-[var(--dur-text)] ease-[var(--ease-luxe)]",
               solid
                 ? "border-brand-sage bg-brand-sage text-white hover:bg-brand-sage/90 hover:shadow-[0_10px_28px_-14px_rgba(92,109,89,0.75)]"
@@ -298,68 +348,116 @@ export function SiteHeader() {
           aria-label="Primary"
           inert={!menuOpen}
           className={cn(
-            "absolute inset-0 flex flex-col gap-4 overflow-y-auto bg-[var(--paper)] px-6 pb-10 pt-24",
+            "absolute inset-0 flex flex-col bg-[var(--paper)]",
             "transition-[opacity,transform] duration-[var(--dur-nav)] ease-[var(--ease-luxe)]",
             menuOpen ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
           )}
         >
+          {/* Only this region scrolls. `overscroll-contain` stops iOS from
+              rubber-banding the locked page behind the sheet, and the top pad
+              clears the fixed header plus any notch / Dynamic Island. */}
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-6 pb-6 pt-[calc(6rem+env(safe-area-inset-top))]">
           {MAIN_NAV.map((item, index) => {
-            // Mega items expose occasions; a plain item may still carry a child
-            // garment tree (Ready to Wear). Either way the sub-links now appear
-            // on mobile rather than being dropped.
-            const subLinks = item.mega
-              ? item.mega.map((column) => column.occasion)
-              : item.children ?? []
+            // The desktop mega menu collapses to a one-level accordion: tapping a
+            // section expands its groups (occasions, garments, collections,
+            // experience). Ready-to-Wear's child tree expands the same way.
+            const groups: { heading?: string; links: NavItem[] }[] = item.megaMenu
+              ? [
+                  item.megaMenu.occasions,
+                  item.megaMenu.garments,
+                  item.megaMenu.collections,
+                  item.megaMenu.experience,
+                ]
+              : item.children
+                ? [{ links: item.children }]
+                : []
             const active = isActive(item.href)
+            const expandable = groups.length > 0
+            const expanded = mobileExpanded === item.label
 
             return (
               <div
                 key={item.label}
                 className={cn(
-                  "flex flex-col gap-2 border-b border-[var(--line)] pb-4",
+                  "border-b border-[var(--rule)] pb-4",
                   // A gentle top-down stagger as the sheet opens.
                   menuOpen &&
                     "animate-in fade-in slide-in-from-top-1 fill-mode-both duration-[var(--dur-mega)]"
                 )}
                 style={menuOpen ? { animationDelay: `${120 + index * 40}ms` } : undefined}
               >
-                <Link
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "font-serif text-2xl tracking-wide transition-colors",
-                    active ? "text-neutral-950" : "text-neutral-900",
-                    focusRing
-                  )}
-                >
-                  {item.label}
-                </Link>
-                {subLinks.length > 0 ? (
-                  <ul className="flex flex-col gap-2">
-                    {subLinks.map((link) => (
-                      <li key={link.label}>
-                        <Link
-                          href={link.href}
-                          onClick={() => setMenuOpen(false)}
-                          className={cn(
-                            "text-sm uppercase tracking-[0.1em] text-neutral-500 transition-colors hover:text-neutral-900",
-                            focusRing
-                          )}
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
+                <div className="flex items-center justify-between">
+                  <Link
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "font-serif text-2xl tracking-wide transition-colors",
+                      active ? "text-neutral-950" : "text-neutral-900",
+                      focusRing
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                  {expandable ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMobileExpanded(expanded ? null : item.label)
+                      }
+                      aria-expanded={expanded}
+                      aria-label={`${expanded ? "Collapse" : "Expand"} ${item.label}`}
+                      className={cn("-mr-2 p-2 text-neutral-500", focusRing)}
+                    >
+                      <ChevronDown
+                        aria-hidden
+                        className={cn(
+                          "h-5 w-5 transition-transform duration-[var(--dur-text)] ease-[var(--ease-luxe)]",
+                          expanded && "rotate-180"
+                        )}
+                      />
+                    </button>
+                  ) : null}
+                </div>
+
+                {expandable && expanded ? (
+                  <div className="mt-3 flex flex-col gap-4 animate-in fade-in slide-in-from-top-1 duration-[var(--dur-dropdown)]">
+                    {groups.map((group, groupIndex) => (
+                      <div key={group.heading ?? groupIndex}>
+                        {group.heading ? (
+                          <h4 className="mb-2 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                            {group.heading}
+                          </h4>
+                        ) : null}
+                        <ul className="flex flex-col gap-2">
+                          {group.links.map((link) => (
+                            <li key={link.label}>
+                              <Link
+                                href={link.href}
+                                onClick={() => setMenuOpen(false)}
+                                className={cn(
+                                  "text-sm text-neutral-600 transition-colors hover:text-neutral-900",
+                                  focusRing
+                                )}
+                              >
+                                {link.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 ) : null}
               </div>
             )
           })}
 
-          {/* Primary CTA + account stay reachable where the desktop cluster is
-              collapsed. */}
-          <div className="mt-2 flex flex-col gap-4">
+          </div>
+
+          {/* Pinned footer — the primary CTA is always in reach without
+              scrolling, and it clears the home indicator on modern phones. */}
+          <div className="flex shrink-0 flex-col gap-4 border-t border-[var(--rule)] px-6 pt-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
             <Link
               href={UTILITY_NAV.bookAppointment.href}
               onClick={() => setMenuOpen(false)}
